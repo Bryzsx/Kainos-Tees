@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kainos Tees - Premium T-Shirts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="logo">kainos<span>.</span></div>
+  <nav class="nav">
+    <a href="#" class="nav-link act" data-view="shop">Shop</a>
+    <a href="#" class="nav-link" data-view="new-arrivals">New Arrivals</a>
+    <a href="#" class="nav-link" data-view="collections">Collections</a>
+    <a href="#" class="nav-link" data-view="sale">Sale</a>
+  </nav>
+  <div class="header-actions">
+    <button id="search-toggle" aria-label="Search">Search</button>
+    <button id="cart-btn" aria-label="Cart">Bag <span class="cart-count" id="cart-count">0</span></button>
+    <span>Account</span>
+  </div>
+</header>
+
+<div class="mobile-nav">
+  <div class="mobile-nav-header">
+    <div class="logo">kainos<span>.</span></div>
+    <button class="mobile-nav-close" aria-label="Close">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <a href="#" class="mobile-nav-link" data-view="shop">Shop All</a>
+    <a href="#" class="mobile-nav-link" data-view="new-arrivals">New Arrivals</a>
+    <a href="#" class="mobile-nav-link" data-view="collections">Collections</a>
+    <a href="#" class="mobile-nav-link" data-view="sale">Sale</a>
+  </div>
+</div>
+
+<div class="search-bar" id="search-bar">
+  <input type="text" id="search-input" placeholder="Search products by name or category..." autocomplete="off">
+</div>
+
+<div class="page-head">
+  <div class="breadcrumb" id="breadcrumb"><a href="#" class="bread-link">Home</a> / Shop All</div>
+  <h1 id="page-title">T-Shirts</h1>
+  <p id="page-desc">Premium fabrics. Every fit. Designed for life.</p>
+</div>
+
+<div class="shop">
+  <div class="shop-bar">
+    <span class="count" id="product-count">Loading...</span>
+    <div class="sort">
+      <span>Sort by</span>
+      <select id="sort-select">
+        <option>Featured</option>
+        <option>Newest</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="shop-inner">
+    <aside class="sidebar">
+      <section>
+        <h4>Category</h4>
+        <ul class="filter-group filter-cat">
+          <li><label><input type="checkbox" value="All Tees" checked> All Tees</label></li>
+          <li><label><input type="checkbox" value="Graphic Tees"> Graphic Tees</label></li>
+          <li><label><input type="checkbox" value="Oversized Fit"> Oversized Fit</label></li>
+          <li><label><input type="checkbox" value="Premium Fit"> Premium Fit</label></li>
+          <li><label><input type="checkbox" value="Organic Cotton"> Organic Cotton</label></li>
+          <li><label><input type="checkbox" value="Limited Edition"> Limited Edition</label></li>
+        </ul>
+      </section>
+      <section class="hr">
+        <h4>Size</h4>
+        <div class="size-group">
+          <span class="size-pill">XS</span>
+          <span class="size-pill">S</span>
+          <span class="size-pill">M</span>
+          <span class="size-pill">L</span>
+          <span class="size-pill">XL</span>
+          <span class="size-pill">2XL</span>
+        </div>
+      </section>
+      <section class="hr">
+        <h4>Color</h4>
+        <div class="swatch-group">
+          <span class="swatch" style="background:#111" title="Black"></span>
+          <span class="swatch" style="background:#fff" title="White"></span>
+          <span class="swatch" style="background:#555" title="Gray"></span>
+          <span class="swatch" style="background:#e84747" title="Red"></span>
+          <span class="swatch" style="background:#1b3a6b" title="Navy"></span>
+          <span class="swatch" style="background:#2d6a4f" title="Green"></span>
+          <span class="swatch" style="background:#f5f0e1" title="Cream"></span>
+        </div>
+      </section>
+      <section class="hr">
+        <h4>Price</h4>
+        <ul class="filter-group filter-price">
+          <li><label><input type="checkbox" value="under25"> Under $25</label></li>
+          <li><label><input type="checkbox" value="25to40"> $25 – $40</label></li>
+          <li><label><input type="checkbox" value="40to55"> $40 – $55</label></li>
+          <li><label><input type="checkbox" value="over55"> Over $55</label></li>
+        </ul>
+      </section>
+    </aside>
+
+    <div style="flex:1;min-width:0">
+      <div class="grid" id="product-grid"></div>
+      <div class="pages" id="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<section id="collections-section" class="hidden"></section>
+
+<section class="signup">
+  <h2>Stay in the loop</h2>
+  <p>15% off your first order + early access to every drop.</p>
+  <div class="signup-form">
+    <input type="email" placeholder="Enter your email">
+    <button>Subscribe</button>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size:18px">kainos<span>.</span></div>
+      <p>Premium t-shirts for the bold, the creative, and the unapologetically original.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a href="#">All Tees</a>
+      <a href="#">New Arrivals</a>
+      <a href="#">Bestsellers</a>
+      <a href="#">Sale</a>
+    </div>
+    <div>
+      <h4>About</h4>
+      <a href="#">Our Story</a>
+      <a href="#">Sustainability</a>
+      <a href="#">Careers</a>
+      <a href="#">Press</a>
+    </div>
+    <div>
+      <h4>Help</h4>
+      <a href="#">Size Guide</a>
+      <a href="#">Shipping</a>
+      <a href="#">Returns</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="bottom">&copy; 2026 Kainos Tees</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

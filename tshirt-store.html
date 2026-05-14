@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kainos Tees — Premium T-Shirts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#fff;color:#111;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid #f0f0f0;position:sticky;top:0;background:#fff;z-index:100}
+.logo{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.logo span{color:#e84747}
+.nav{display:flex;gap:24px;font-size:13px;font-weight:500;letter-spacing:.2px}
+.nav a{text-decoration:none;color:#555;transition:color .2s;text-transform:uppercase}
+.nav a:hover{color:#111}
+.header-actions{display:flex;gap:16px;font-size:16px;cursor:default;align-items:center}
+.header-actions span{cursor:pointer;transition:opacity .2s}
+.header-actions span:hover{opacity:.5}
+
+/* PAGE HEADER */
+.page-head{padding:32px 48px 8px}
+.breadcrumb{font-size:12px;color:#999;margin-bottom:6px}
+.breadcrumb a{color:#999;text-decoration:none}
+.breadcrumb a:hover{color:#111}
+.page-head h1{font-size:32px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
+.page-head p{font-size:14px;color:#888}
+
+/* SHOP LAYOUT */
+.shop{padding:0 48px 64px}
+.shop-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 24px;border-bottom:1px solid #f0f0f0;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.shop-bar .count{font-size:13px;color:#888}
+.shop-bar .sort{display:flex;align-items:center;gap:8px;font-size:13px;color:#555}
+.shop-bar .sort select{padding:6px 12px;border:1px solid #ddd;border-radius:6px;font-size:12px;font-family:inherit;background:#fff;outline:none;cursor:pointer}
+.shop-bar .sort select:focus{border-color:#111}
+.shop-inner{display:flex;gap:40px}
+.sidebar{width:220px;flex-shrink:0}
+.sidebar h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#888;margin-bottom:12px}
+.sidebar section{margin-bottom:28px}
+.sidebar section.hr{border-top:1px solid #f0f0f0;padding-top:20px}
+.filter-group{list-style:none}
+.filter-group li{margin-bottom:6px}
+.filter-group label{display:flex;align-items:center;gap:8px;font-size:13px;color:#444;cursor:pointer}
+.filter-group input[type=checkbox]{width:15px;height:15px;accent-color:#111;cursor:pointer}
+.swatch-group{display:flex;flex-wrap:wrap;gap:6px}
+.swatch{width:24px;height:24px;border-radius:50%;border:1.5px solid #ddd;cursor:pointer;transition:border-color .15s}
+.swatch:hover,.swatch.sel{border-color:#111}
+.size-group{display:flex;flex-wrap:wrap;gap:4px}
+.size-pill{padding:6px 14px;border:1px solid #ddd;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;transition:all .15s;color:#555}
+.size-pill:hover,.size-pill.sel{border-color:#111;color:#111}
+
+/* PRODUCT GRID */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:#fff;cursor:pointer;transition:opacity .2s}
+.card:hover{opacity:.85}
+.card-img{position:relative;background:#f8f8f8;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:12px}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.tag{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 8px;border-radius:4px;color:#fff}
+.tag.new{background:#e84747}
+.tag.sale{background:#111}
+.tag.best{background:#111}
+.card-body{padding:0 2px}
+.card-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.card-cat{font-size:11px;color:#bbb;margin-bottom:4px}
+.card-price{font-size:15px;font-weight:600}
+.card-price .old{text-decoration:line-through;color:#ccc;font-weight:400;font-size:12px;margin-left:4px}
+.card-price .sale{color:#e84747;font-weight:700}
+.card-swatches{display:flex;gap:4px;margin-top:8px}
+.c-dot{width:12px;height:12px;border-radius:50%;border:1px solid #eee;cursor:pointer}
+.c-dot:hover{border-color:#111}
+
+/* PAGINATION */
+.pages{display:flex;justify-content:center;gap:4px;margin-top:48px}
+.pg{width:34px;height:34px;border-radius:6px;border:1px solid #eee;background:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:#555}
+.pg:hover{border-color:#111;color:#111}
+.pg.act{background:#111;color:#fff;border-color:#111}
+
+/* COLLECTIONS */
+.col-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 48px 48px}
+.col-card{position:relative;height:300px;overflow:hidden;cursor:pointer;background:#f8f8f8}
+.col-card .bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:100px}
+.col-card .ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%)}
+.col-card .txt{position:absolute;bottom:0;left:0;right:0;padding:24px;color:#fff}
+.col-card h3{font-size:18px;font-weight:700;margin-bottom:2px}
+.col-card p{font-size:12px;opacity:.8;margin-bottom:10px}
+.col-card .shop-now{display:inline-block;padding:8px 20px;border-radius:4px;background:#fff;color:#111;font-size:11px;font-weight:600;border:none;cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:.5px}
+
+/* SALE BANNER */
+.sale-lead{padding:0 48px}
+.sale-banner{padding:48px;background:#111;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:32px}
+.sale-banner .l{flex:1}
+.sale-banner .label{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px}
+.sale-banner h2{font-size:36px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.sale-banner h2 span{color:#e84747}
+.sale-banner p{font-size:14px;color:#888;margin-bottom:16px}
+.sale-banner .btn-shop{padding:12px 28px;background:#e84747;color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:opacity .2s}
+.sale-banner .btn-shop:hover{opacity:.85}
+.sale-banner .big{font-size:100px;opacity:.3;flex-shrink:0}
+
+/* SALE TABS */
+.sale-tabs{display:flex;gap:4px;margin-bottom:20px}
+.sale-tab{padding:8px 20px;border:1px solid #ddd;background:#fff;font-size:12px;cursor:pointer;transition:all .15s;color:#555}
+.sale-tab:hover{border-color:#111;color:#111}
+.sale-tab.act{background:#111;color:#fff;border-color:#111}
+
+/* NEWSLETTER */
+.signup{margin:64px 48px 0;padding:48px;background:#f8f8f8;text-align:center}
+.signup h2{font-size:24px;font-weight:700;margin-bottom:4px}
+.signup p{font-size:13px;color:#888;margin-bottom:20px}
+.signup-form{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.signup-form input{padding:12px 16px;border:1px solid #ddd;border-radius:4px;width:300px;max-width:100%;font-size:13px;outline:none;font-family:inherit}
+.signup-form input:focus{border-color:#111}
+.signup-form button{padding:12px 24px;border:none;background:#111;color:#fff;font-size:12px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;font-family:inherit;transition:opacity .2s}
+.signup-form button:hover{opacity:.8}
+
+/* FOOTER */
+.footer{padding:48px 48px 24px;border-top:1px solid #f0f0f0;margin-top:64px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:32px}
+.footer-brand p{font-size:12px;color:#888;line-height:1.6;max-width:240px;margin-top:8px}
+.footer h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;color:#555}
+.footer a{display:block;text-decoration:none;color:#888;font-size:12px;margin-bottom:8px;transition:color .2s}
+.footer a:hover{color:#111}
+.footer .bottom{text-align:center;padding-top:24px;border-top:1px solid #f0f0f0;font-size:11px;color:#ccc}
+
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:40px 48px 20px}
+.sec-head h2{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.sec-head a{font-size:12px;color:#888;text-decoration:none;text-transform:uppercase;letter-spacing:.5px}
+.sec-head a:hover{color:#111}
+
+/* ARRIVALS BANNER */
+.arrival-banner{padding:48px;background:#f8f8f8;margin:0 48px;display:flex;align-items:center;justify-content:space-between}
+.arrival-banner .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#e84747;margin-bottom:6px}
+.arrival-banner h2{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.arrival-banner p{font-size:13px;color:#888;margin-top:4px}
+.arrival-banner .big{font-size:80px;opacity:.15}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.col-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.header{padding:14px 20px}.nav{display:none}.page-head{padding:20px 20px 8px}
+.shop{padding:0 20px 40px}.shop-inner{flex-direction:column}.sidebar{width:100%;display:flex;flex-wrap:wrap;gap:12px}
+.sidebar section{flex:1;min-width:120px;margin-bottom:0}.grid{grid-template-columns:repeat(2,1fr)}
+.col-grid{grid-template-columns:1fr;padding:0 20px 40px}.sale-lead{padding:0 20px}.sale-banner{flex-direction:column;text-align:center;padding:32px}
+.arrival-banner{margin:0 20px;flex-direction:column;text-align:center;padding:32px}.sec-head{padding:32px 20px 16px}
+.signup{margin:40px 20px 0;padding:32px 20px}.footer{padding:32px 20px 16px}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.col-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">kainos<span>.</span></div>
+  <nav class="nav">
+    <a href="#">Shop</a>
+    <a href="#">New Arrivals</a>
+    <a href="#">Collections</a>
+    <a href="#">Sale</a>
+  </nav>
+  <div class="header-actions">
+    <span>Search</span>
+    <span>Bag</span>
+    <span>Account</span>
+  </div>
+</header>
+
+<!-- ======================== SHOP PAGE ======================== -->
+<div class="page-head">
+  <div class="breadcrumb"><a href="#">Home</a> / Shop All</div>
+  <h1>T-Shirts</h1>
+  <p>120+ designs. Premium fabrics. Every fit.</p>
+</div>
+
+<div class="shop">
+  <div class="shop-bar">
+    <span class="count">120 Products</span>
+    <div class="sort">
+      <span>Sort by</span>
+      <select>
+        <option>Featured</option>
+        <option>Newest</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="shop-inner">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <section>
+        <h4>Category</h4>
+        <ul class="filter-group">
+          <li><label><input type="checkbox" checked> All Tees</label></li>
+          <li><label><input type="checkbox"> Graphic Tees</label></li>
+          <li><label><input type="checkbox"> Oversized Fit</label></li>
+          <li><label><input type="checkbox"> Premium Fit</label></li>
+          <li><label><input type="checkbox"> Organic Cotton</label></li>
+        </ul>
+      </section>
+      <section class="hr">
+        <h4>Size</h4>
+        <div class="size-group">
+          <span class="size-pill sel">XS</span>
+          <span class="size-pill">S</span>
+          <span class="size-pill">M</span>
+          <span class="size-pill">L</span>
+          <span class="size-pill">XL</span>
+          <span class="size-pill">2XL</span>
+        </div>
+      </section>
+      <section class="hr">
+        <h4>Color</h4>
+        <div class="swatch-group">
+          <span class="swatch sel" style="background:#111"></span>
+          <span class="swatch" style="background:#fff"></span>
+          <span class="swatch" style="background:#555"></span>
+          <span class="swatch" style="background:#e84747"></span>
+          <span class="swatch" style="background:#111"></span>
+          <span class="swatch" style="background:#f5f0e1"></span>
+          <span class="swatch" style="background:#2d6a4f"></span>
+          <span class="swatch" style="background:#1b3a6b"></span>
+        </div>
+      </section>
+      <section class="hr">
+        <h4>Price</h4>
+        <ul class="filter-group">
+          <li><label><input type="checkbox"> Under $25</label></li>
+          <li><label><input type="checkbox" checked> $25 – $40</label></li>
+          <li><label><input type="checkbox"> $40 – $55</label></li>
+          <li><label><input type="checkbox"> Over $55</label></li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- PRODUCT GRID -->
+    <div style="flex:1;min-width:0">
+      <div class="grid">
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1618354691438-25bc04584c23?w=400&h=500&fit=crop" alt="Mountain Graphic Tee"><span class="tag best">Best seller</span></div>
+          <div class="card-body">
+            <div class="card-name">Mountain Graphic Tee</div>
+            <div class="card-cat">Graphic Tee</div>
+            <div class="card-price">$38</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#111"></span>
+              <span class="c-dot" style="background:#fff"></span>
+              <span class="c-dot" style="background:#555"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1651761179569-4ba2aa054997?w=400&h=500&fit=crop" alt="Relaxed Fit Pocket Tee"><span class="tag new">New</span></div>
+          <div class="card-body">
+            <div class="card-name">Relaxed Fit Pocket Tee</div>
+            <div class="card-cat">Oversized Fit</div>
+            <div class="card-price">$42</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#1b3a6b"></span>
+              <span class="c-dot" style="background:#111"></span>
+              <span class="c-dot" style="background:#f5f0e1"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1618677603286-0ec56cb6e1b5?w=400&h=500&fit=crop" alt="Organic Crew Neck"></div>
+          <div class="card-body">
+            <div class="card-name">Organic Crew Neck</div>
+            <div class="card-cat">Organic Cotton</div>
+            <div class="card-price">$36</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#2d6a4f"></span>
+              <span class="c-dot" style="background:#fff"></span>
+              <span class="c-dot" style="background:#111"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1716951884284-4d138f2c42b2?w=400&h=500&fit=crop" alt="Abstract Print Tee"><span class="tag sale">Sale</span></div>
+          <div class="card-body">
+            <div class="card-name">Abstract Print Tee</div>
+            <div class="card-cat">Limited Edition</div>
+            <div class="card-price"><span class="sale">$26</span> <span class="old">$40</span></div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#111"></span>
+              <span class="c-dot" style="background:#e84747"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&h=500&fit=crop" alt="Heavyweight Box Tee"><span class="tag new">New</span></div>
+          <div class="card-body">
+            <div class="card-name">Heavyweight Box Tee</div>
+            <div class="card-cat">Premium Fit</div>
+            <div class="card-price">$48</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#111"></span>
+              <span class="c-dot" style="background:#555"></span>
+              <span class="c-dot" style="background:#fff"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1714070700742-b59b045d2dd9?w=400&h=500&fit=crop" alt="Wash Garment Dye Tee"></div>
+          <div class="card-body">
+            <div class="card-name">Wash Garment Dye Tee</div>
+            <div class="card-cat">Oversized Fit</div>
+            <div class="card-price">$44</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#f5f0e1"></span>
+              <span class="c-dot" style="background:#555"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1622445270936-5dcb604970e7?w=400&h=500&fit=crop" alt="Minimal Logo Tee"><span class="tag new">New</span></div>
+          <div class="card-body">
+            <div class="card-name">Minimal Logo Tee</div>
+            <div class="card-cat">Premium Fit</div>
+            <div class="card-price">$34</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#fff"></span>
+              <span class="c-dot" style="background:#111"></span>
+              <span class="c-dot" style="background:#1b3a6b"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1773525912457-6a7278efb9e4?w=400&h=500&fit=crop" alt="Striped Essential Tee"><span class="tag best">Best seller</span></div>
+          <div class="card-body">
+            <div class="card-name">Striped Essential Tee</div>
+            <div class="card-cat">Organic Cotton</div>
+            <div class="card-price">$32</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#e84747"></span>
+              <span class="c-dot" style="background:#111"></span>
+              <span class="c-dot" style="background:#fff"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1622445275649-b1922cc3e837?w=400&h=500&fit=crop" alt="Drop Shoulder Tee"></div>
+          <div class="card-body">
+            <div class="card-name">Drop Shoulder Tee</div>
+            <div class="card-cat">Oversized Fit</div>
+            <div class="card-price">$40</div>
+            <div class="card-swatches">
+              <span class="c-dot" style="background:#555"></span>
+              <span class="c-dot" style="background:#111"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pages">
+        <span class="pg act">1</span>
+        <span class="pg">2</span>
+        <span class="pg">3</span>
+        <span class="pg">...</span>
+        <span class="pg">8</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== NEW ARRIVALS ======================== -->
+<div class="page-head" style="border-top:1px solid #f0f0f0;padding-top:48px;margin:0 48px">
+  <div class="breadcrumb"><a href="#">Home</a> / New Arrivals</div>
+  <h1>New Arrivals</h1>
+  <p>Fresh drops every Friday. Limited quantities.</p>
+</div>
+
+<div class="arrival-banner">
+  <div>
+    <div class="lbl">This Week's Drop</div>
+    <h2>Eight new designs,<br>one fresh drop.</h2>
+    <p>Premium fabrics, bold prints. Get them before they sell out.</p>
+  </div>
+  <div class="big">✦</div>
+</div>
+
+<div class="shop" style="padding-top:32px">
+  <div class="grid">
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1671438118097-479e63198629?w=400&h=500&fit=crop" alt="Solar Flare Tee"><span class="tag new">New</span></div>
+      <div class="card-body">
+        <div class="card-name">Solar Flare Tee</div>
+        <div class="card-cat">Limited Edition</div>
+        <div class="card-price">$46</div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#e84747"></span>
+          <span class="c-dot" style="background:#111"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1618354691551-44de113f0164?w=400&h=500&fit=crop" alt="Midnight Run Tee"><span class="tag new">New</span></div>
+      <div class="card-body">
+        <div class="card-name">Midnight Run Tee</div>
+        <div class="card-cat">Premium Fit</div>
+        <div class="card-price">$42</div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#1b3a6b"></span>
+          <span class="c-dot" style="background:#111"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1618354691438-25bc04584c23?w=400&h=500&fit=crop" alt="Tropical Haze"><span class="tag new">New</span></div>
+      <div class="card-body">
+        <div class="card-name">Tropical Haze</div>
+        <div class="card-cat">Oversized Fit</div>
+        <div class="card-price">$38</div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#2d6a4f"></span>
+          <span class="c-dot" style="background:#e84747"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1651761179569-4ba2aa054997?w=400&h=500&fit=crop" alt="Geometric Love Tee"><span class="tag new">New</span></div>
+      <div class="card-body">
+        <div class="card-name">Geometric Love Tee</div>
+        <div class="card-cat">Graphic Tee</div>
+        <div class="card-price">$36</div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#fff"></span>
+          <span class="c-dot" style="background:#111"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1618677603286-0ec56cb6e1b5?w=400&h=500&fit=crop" alt="Ocean Depth Tee"><span class="tag new">New</span></div>
+      <div class="card-body">
+        <div class="card-name">Ocean Depth Tee</div>
+        <div class="card-cat">Organic Cotton</div>
+        <div class="card-price">$40</div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#1b3a6b"></span>
+          <span class="c-dot" style="background:#f5f0e1"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1716951884284-4d138f2c42b2?w=400&h=500&fit=crop" alt="Street Code Tee"><span class="tag new">New</span></div>
+      <div class="card-body">
+        <div class="card-name">Street Code Tee</div>
+        <div class="card-cat">Oversized Fit</div>
+        <div class="card-price">$40</div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#111"></span>
+          <span class="c-dot" style="background:#555"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== COLLECTIONS ======================== -->
+<div class="page-head" style="border-top:1px solid #f0f0f0;padding-top:48px;margin:0 48px">
+  <div class="breadcrumb"><a href="#">Home</a> / Collections</div>
+  <h1>Collections</h1>
+  <p>Curated by vibe. Designed for life.</p>
+</div>
+
+<div class="col-grid" style="padding-top:24px">
+  <div class="col-card">
+    <div class="bg" style="background:#1a1a2e">✦</div>
+    <div class="ov"></div>
+    <div class="txt">
+      <h3>Street Canvas</h3>
+      <p>Urban art inspired. 24 designs.</p>
+      <a href="#" class="shop-now">Shop Now</a>
+    </div>
+  </div>
+  <div class="col-card">
+    <div class="bg" style="background:#f5f0e1">○</div>
+    <div class="ov"></div>
+    <div class="txt">
+      <h3>Earth Tone</h3>
+      <p>Organic minimal. 18 designs.</p>
+      <a href="#" class="shop-now">Shop Now</a>
+    </div>
+  </div>
+  <div class="col-card">
+    <div class="bg" style="background:#0d0d0d">◈</div>
+    <div class="ov"></div>
+    <div class="txt">
+      <h3>Retro Wave</h3>
+      <p>Synth meets street. 15 designs.</p>
+      <a href="#" class="shop-now">Shop Now</a>
+    </div>
+  </div>
+  <div class="col-card">
+    <div class="bg" style="background:#f8f0f0">◇</div>
+    <div class="ov"></div>
+    <div class="txt">
+      <h3>Bloom Society</h3>
+      <p>Botanical reimagined. 12 designs.</p>
+      <a href="#" class="shop-now">Shop Now</a>
+    </div>
+  </div>
+  <div class="col-card">
+    <div class="bg" style="background:#1e1e1e">▣</div>
+    <div class="ov"></div>
+    <div class="txt">
+      <h3>Cyber Punk</h3>
+      <p>Future forward. 10 designs.</p>
+      <a href="#" class="shop-now">Shop Now</a>
+    </div>
+  </div>
+  <div class="col-card">
+    <div class="bg" style="background:#faf5eb">△</div>
+    <div class="ov"></div>
+    <div class="txt">
+      <h3>Summer Daze</h3>
+      <p>Vacation ready. 20 designs.</p>
+      <a href="#" class="shop-now">Shop Now</a>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SALE PAGE ======================== -->
+<div class="page-head" style="border-top:1px solid #f0f0f0;padding-top:48px;margin:0 48px">
+  <div class="breadcrumb"><a href="#">Home</a> / We Made Too Much</div>
+  <h1>We Made Too Much</h1>
+  <p>Limited stock. Unlimited savings.</p>
+</div>
+
+<div class="sale-lead">
+  <div class="sale-banner">
+    <div class="l">
+      <div class="label">Flash Sale</div>
+      <h2>Up to <span>60% off</span></h2>
+      <p>Ends soon. Extra 10% off with code <strong>KAINOS10</strong></p>
+      <button class="btn-shop">Shop the Sale</button>
+    </div>
+    <div class="big">%</div>
+  </div>
+</div>
+
+<div class="shop" style="padding-top:32px">
+  <div class="sale-tabs">
+    <span class="sale-tab act">All Deals</span>
+    <span class="sale-tab">Under $20</span>
+    <span class="sale-tab">50%+ Off</span>
+    <span class="sale-tab">Last Chance</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&h=500&fit=crop" alt="Vintage Logo Tee"><span class="tag sale">-40%</span></div>
+      <div class="card-body">
+        <div class="card-name">Vintage Logo Tee</div>
+        <div class="card-cat">Graphic Tee</div>
+        <div class="card-price"><span class="sale">$18</span> <span class="old">$30</span></div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#111"></span>
+          <span class="c-dot" style="background:#fff"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1714070700742-b59b045d2dd9?w=400&h=500&fit=crop" alt="Abstract Mind Tee"><span class="tag sale">-55%</span></div>
+      <div class="card-body">
+        <div class="card-name">Abstract Mind Tee</div>
+        <div class="card-cat">Limited Edition</div>
+        <div class="card-price"><span class="sale">$16</span> <span class="old">$36</span></div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#555"></span>
+          <span class="c-dot" style="background:#111"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1622445270936-5dcb604970e7?w=400&h=500&fit=crop" alt="Mountain Graphic Tee"><span class="tag sale">-30%</span></div>
+      <div class="card-body">
+        <div class="card-name">Mountain Graphic Tee</div>
+        <div class="card-cat">Graphic Tee</div>
+        <div class="card-price"><span class="sale">$28</span> <span class="old">$40</span></div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#111"></span>
+          <span class="c-dot" style="background:#fff"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1773525912457-6a7278efb9e4?w=400&h=500&fit=crop" alt="Classic Logo Tee"><span class="tag sale">-60%</span></div>
+      <div class="card-body">
+        <div class="card-name">Classic Logo Tee</div>
+        <div class="card-cat">Premium Fit</div>
+        <div class="card-price"><span class="sale">$14</span> <span class="old">$35</span></div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#111"></span>
+          <span class="c-dot" style="background:#fff"></span>
+          <span class="c-dot" style="background:#555"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1622445275649-b1922cc3e837?w=400&h=500&fit=crop" alt="Tie Dye Dream Tee"><span class="tag sale">-45%</span></div>
+      <div class="card-body">
+        <div class="card-name">Tie Dye Dream Tee</div>
+        <div class="card-cat">Oversized Fit</div>
+        <div class="card-price"><span class="sale">$22</span> <span class="old">$40</span></div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#e84747"></span>
+          <span class="c-dot" style="background:#555"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://images.unsplash.com/photo-1671438118097-479e63198629?w=400&h=500&fit=crop" alt="Retro Stripe Tee"><span class="tag sale">-50%</span></div>
+      <div class="card-body">
+        <div class="card-name">Retro Stripe Tee</div>
+        <div class="card-cat">Organic Cotton</div>
+        <div class="card-price"><span class="sale">$20</span> <span class="old">$40</span></div>
+        <div class="card-swatches">
+          <span class="c-dot" style="background:#1b3a6b"></span>
+          <span class="c-dot" style="background:#fff"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<section class="signup">
+  <h2>Stay in the loop</h2>
+  <p>15% off your first order + early access to every drop.</p>
+  <div class="signup-form">
+    <input type="email" placeholder="Enter your email">
+    <button>Subscribe</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size:18px">kainos<span>.</span></div>
+      <p>Premium t-shirts for the bold, the creative, and the unapologetically original.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a href="#">All Tees</a>
+      <a href="#">New Arrivals</a>
+      <a href="#">Bestsellers</a>
+      <a href="#">Sale</a>
+    </div>
+    <div>
+      <h4>About</h4>
+      <a href="#">Our Story</a>
+      <a href="#">Sustainability</a>
+      <a href="#">Careers</a>
+      <a href="#">Press</a>
+    </div>
+    <div>
+      <h4>Help</h4>
+      <a href="#">Size Guide</a>
+      <a href="#">Shipping</a>
+      <a href="#">Returns</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="bottom">© 2026 Kainos Tees</div>
+</footer>
+
+</body>
+</html>
