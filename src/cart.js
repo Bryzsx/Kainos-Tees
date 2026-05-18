@@ -1,15 +1,15 @@
 const STORAGE_KEY = 'kainos_cart'
 
-function getCart() {
+export function getCart() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] } catch { return [] }
 }
 
-function saveCart(cart) {
+export function saveCart(cart) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
   dispatchEvent(new CustomEvent('cart:update'))
 }
 
-function addToCart(product, size, color) {
+export function addToCart(product, size, color) {
   const cart = getCart()
   const key = `${product.id}-${size}-${color.h}`
   const existing = cart.find(i => i.key === key)
@@ -22,12 +22,12 @@ function addToCart(product, size, color) {
   showToast(`${product.name} added to bag`)
 }
 
-function removeFromCart(key) {
+export function removeFromCart(key) {
   const cart = getCart().filter(i => i.key !== key)
   saveCart(cart)
 }
 
-function updateQty(key, delta) {
+export function updateQty(key, delta) {
   const cart = getCart()
   const item = cart.find(i => i.key === key)
   if (item) {
@@ -36,11 +36,11 @@ function updateQty(key, delta) {
   }
 }
 
-function getCartCount() {
+export function getCartCount() {
   return getCart().reduce((sum, i) => sum + i.qty, 0)
 }
 
-function getCartTotal() {
+export function getCartTotal() {
   return getCart().reduce((sum, i) => sum + i.price * i.qty, 0)
 }
 
@@ -50,7 +50,7 @@ cartOverlay.className = 'cart-overlay'
 const cartDrawer = document.createElement('div')
 cartDrawer.className = 'cart-drawer'
 
-function renderCart() {
+export function renderCart() {
   const items = getCart()
   if (!cartDrawer.parentNode) {
     document.body.appendChild(cartOverlay)
@@ -58,11 +58,11 @@ function renderCart() {
   }
   if (!items.length) {
     cartDrawer.innerHTML = `
-      <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="closeCart()">✕</button></div>
+      <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
       <div class="cart-empty"><p>Your bag is empty.</p></div>`
     return
   }
-  let html = `<div class="cart-header"><h3>Your Bag (${getCartCount()})</h3><button class="cart-close" onclick="closeCart()">✕</button></div>
+  let html = `<div class="cart-header"><h3>Your Bag (${getCartCount()})</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
     <div class="cart-items">`
   items.forEach(i => {
     html += `<div class="cart-item">
@@ -73,11 +73,11 @@ function renderCart() {
         <div class="cart-item-price">$${i.price}</div>
       </div>
       <div class="cart-item-qty">
-        <button onclick="updateQty('${i.key}', -1)">−</button>
+        <button onclick="window.updateQty('${i.key}', -1)">\u2212</button>
         <span>${i.qty}</span>
-        <button onclick="updateQty('${i.key}', 1)">+</button>
+        <button onclick="window.updateQty('${i.key}', 1)">+</button>
       </div>
-      <button class="cart-item-remove" onclick="removeFromCart('${i.key}')">✕</button>
+      <button class="cart-item-remove" onclick="window.removeFromCart('${i.key}')">\u2715</button>
     </div>`
   })
   html += `</div>
@@ -86,16 +86,21 @@ function renderCart() {
       <button class="cart-checkout">Checkout</button>
     </div>`
   cartDrawer.innerHTML = html
+
+  const btn = cartDrawer.querySelector('.cart-checkout')
+  if (btn) {
+    btn.onclick = () => dispatchEvent(new CustomEvent('checkout:open'))
+  }
 }
 
-function openCart() {
+export function openCart() {
   renderCart()
   cartOverlay.classList.add('open')
   cartDrawer.classList.add('open')
   document.body.style.overflow = 'hidden'
 }
 
-function closeCart() {
+export function closeCart() {
   cartOverlay.classList.remove('open')
   cartDrawer.classList.remove('open')
   document.body.style.overflow = ''
@@ -104,13 +109,24 @@ function closeCart() {
 cartOverlay.addEventListener('click', closeCart)
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart() })
 
+addEventListener('cart:update', () => {
+  const el = document.getElementById('cart-count')
+  if (el) el.textContent = getCartCount()
+  renderCart()
+})
+
 const toast = document.createElement('div')
 toast.className = 'toast'
 
-function showToast(msg, duration) {
+export function showToast(msg, duration) {
   if (!toast.parentNode) document.body.appendChild(toast)
   toast.textContent = msg
   toast.classList.add('open')
   clearTimeout(toast._t)
   toast._t = setTimeout(() => toast.classList.remove('open'), duration || 2200)
 }
+
+window.addToCart = addToCart
+window.removeFromCart = removeFromCart
+window.updateQty = updateQty
+window.closeCart = closeCart

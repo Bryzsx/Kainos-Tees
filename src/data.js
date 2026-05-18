@@ -1,4 +1,6 @@
-const PHOTOS = [
+import { supabase, isSupabased } from './lib/supabase.js'
+
+export const PHOTOS = [
   'https://images.unsplash.com/photo-1618354691438-25bc04584c23?w=400&h=500&fit=crop',
   'https://images.unsplash.com/photo-1651761179569-4ba2aa054997?w=400&h=500&fit=crop',
   'https://images.unsplash.com/photo-1618677603286-0ec56cb6e1b5?w=400&h=500&fit=crop',
@@ -12,19 +14,19 @@ const PHOTOS = [
   'https://images.unsplash.com/photo-1618354691551-44de113f0164?w=400&h=500&fit=crop',
 ]
 
-const COLLECTIONS = [
-  { id: 'street-canvas', name: 'Street Canvas', desc: 'Urban art inspired. 24 designs.', icon: '✦', bg: '#1a1a2e', text: '#fff' },
-  { id: 'earth-tone', name: 'Earth Tone', desc: 'Organic minimal. 18 designs.', icon: '○', bg: '#f5f0e1', text: '#111' },
-  { id: 'retro-wave', name: 'Retro Wave', desc: 'Synth meets street. 15 designs.', icon: '◈', bg: '#0d0d0d', text: '#fff' },
-  { id: 'bloom-society', name: 'Bloom Society', desc: 'Botanical reimagined. 12 designs.', icon: '◇', bg: '#f8f0f0', text: '#111' },
-  { id: 'cyber-punk', name: 'Cyber Punk', desc: 'Future forward. 10 designs.', icon: '▣', bg: '#1e1e1e', text: '#fff' },
-  { id: 'summer-daze', name: 'Summer Daze', desc: 'Vacation ready. 20 designs.', icon: '△', bg: '#faf5eb', text: '#111' },
+export const COLLECTIONS = [
+  { id: 'street-canvas', name: 'Street Canvas', desc: 'Urban art inspired. 24 designs.', icon: '\u2726', bg: '#1a1a2e', text: '#fff' },
+  { id: 'earth-tone', name: 'Earth Tone', desc: 'Organic minimal. 18 designs.', icon: '\u25CB', bg: '#f5f0e1', text: '#111' },
+  { id: 'retro-wave', name: 'Retro Wave', desc: 'Synth meets street. 15 designs.', icon: '\u25C8', bg: '#0d0d0d', text: '#fff' },
+  { id: 'bloom-society', name: 'Bloom Society', desc: 'Botanical reimagined. 12 designs.', icon: '\u25C7', bg: '#f8f0f0', text: '#111' },
+  { id: 'cyber-punk', name: 'Cyber Punk', desc: 'Future forward. 10 designs.', icon: '\u25A3', bg: '#1e1e1e', text: '#fff' },
+  { id: 'summer-daze', name: 'Summer Daze', desc: 'Vacation ready. 20 designs.', icon: '\u25B3', bg: '#faf5eb', text: '#111' },
 ]
 
-const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL']
-const ALL_CATEGORIES = ['Graphic Tees', 'Oversized Fit', 'Premium Fit', 'Organic Cotton', 'Limited Edition']
+export const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL']
+export const ALL_CATEGORIES = ['Graphic Tees', 'Oversized Fit', 'Premium Fit', 'Organic Cotton', 'Limited Edition']
 
-const products = [
+const LOCAL_PRODUCTS = [
   { id: 1, name: 'Mountain Graphic Tee', category: 'Graphic Tees', price: 38, oldPrice: null, tag: 'Best seller', collection: 'street-canvas',
     sizes: ['XS', 'S', 'M', 'L', 'XL'], colors: [{ n: 'Black', h: '#111' }, { n: 'White', h: '#fff' }, { n: 'Gray', h: '#555' }], image: PHOTOS[0], featured: true, isNew: false, rating: 4.8, reviews: 124 },
   { id: 2, name: 'Relaxed Fit Pocket Tee', category: 'Oversized Fit', price: 42, oldPrice: null, tag: 'New', collection: 'bloom-society',
@@ -74,3 +76,43 @@ const products = [
   { id: 24, name: 'Eco Logo Tee', category: 'Organic Cotton', price: 28, oldPrice: null, tag: null, collection: 'earth-tone',
     sizes: ['XS', 'S', 'M', 'L', 'XL', '2XL'], colors: [{ n: 'Green', h: '#2d6a4f' }, { n: 'White', h: '#fff' }], image: PHOTOS[1], featured: false, isNew: false, rating: 4.4, reviews: 167 },
 ]
+
+let cachedProducts = null
+
+export async function getProducts() {
+  if (cachedProducts) return cachedProducts
+
+  if (isSupabased()) {
+    const { data, error } = await supabase.from('products').select('*').order('id')
+    if (!error && data?.length) {
+      cachedProducts = data.map(p => ({
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        price: p.price,
+        oldPrice: p.old_price,
+        tag: p.tag,
+        collection: p.collection_id,
+        sizes: p.sizes || [],
+        colors: p.colors || [],
+        image: p.image,
+        featured: p.featured,
+        isNew: p.is_new,
+        rating: p.rating,
+        reviews: p.reviews,
+      }))
+      return cachedProducts
+    }
+  }
+
+  cachedProducts = LOCAL_PRODUCTS
+  return LOCAL_PRODUCTS
+}
+
+export async function getCollections() {
+  if (isSupabased()) {
+    const { data } = await supabase.from('collections').select('*')
+    if (data?.length) return data.map(c => ({ id: c.id, name: c.name, desc: c.description, icon: c.icon, bg: c.bg_color, text: c.text_color }))
+  }
+  return COLLECTIONS
+}

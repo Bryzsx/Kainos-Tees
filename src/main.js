@@ -1,14 +1,14 @@
-// ─── EmailJS Configuration ──────────────────────────────
-// 1. Sign up free at https://www.emailjs.com
-// 2. Connect your Gmail → Get Service ID
-// 3. Create Email Template (template with: to_email, to_name, verification_code)
-// 4. Paste your keys below:
+import { getProducts, getCollections, ALL_SIZES, ALL_CATEGORIES, COLLECTIONS as LOCAL_COLLECTIONS } from './data.js'
+import { getCart, addToCart, removeFromCart, updateQty, getCartCount, getCartTotal, renderCart, openCart, closeCart, showToast } from './cart.js'
+import { getCurrentUser, getCachedUser, setCurrentUser, signUp, signIn, verifyUser, signOut } from './auth.js'
+import { supabase, isSupabased } from './lib/supabase.js'
+import './styles/style.css'
+
 const EMAILJS_CONFIG = {
-  publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
-  serviceId: 'YOUR_EMAILJS_SERVICE_ID',
-  templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_EMAILJS_PUBLIC_KEY',
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_EMAILJS_SERVICE_ID',
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_EMAILJS_TEMPLATE_ID',
 }
-// ────────────────────────────────────────────────────────
 
 function sendVerificationEmail(name, email, code) {
   if (typeof emailjs === 'undefined') {
@@ -28,7 +28,7 @@ function sendVerificationEmail(name, email, code) {
     verification_code: code,
     from_name: 'Kainos Tees',
   }).then(() => {
-    showToast(`✓ Verification code sent to ${email}`)
+    showToast(`Verification code sent to ${email}`)
     return true
   }).catch(err => {
     console.error('EmailJS error:', err)
@@ -38,6 +38,7 @@ function sendVerificationEmail(name, email, code) {
 }
 
 const PER_PAGE = 9
+let allProducts = []
 const state = {
   view: 'shop',
   categories: ['All Tees'],
@@ -90,6 +91,8 @@ function switchView(view) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+window.switchView = switchView
+
 function resetFilters() {
   document.querySelectorAll('.filter-cat input').forEach(c => c.checked = c.value === 'All Tees')
   document.querySelectorAll('.size-pill').forEach(s => s.classList.remove('sel'))
@@ -108,7 +111,7 @@ function closeMobileNav() {
 document.querySelector('.mobile-nav-close')?.addEventListener('click', closeMobileNav)
 
 function getFiltered() {
-  let result = [...products]
+  let result = [...allProducts]
 
   if (state.view === 'new-arrivals') {
     result = result.filter(p => p.isNew)
@@ -162,7 +165,7 @@ const VIEW_META = {
   'collection': { title: 'Collection', desc: 'Curated by vibe. Designed for life.', bread: 'Collection' },
 }
 
-function render() {
+async function render() {
   const meta = VIEW_META[state.view === 'collection' && state.collection ? 'collection' : state.view] || VIEW_META.shop
   if (pageTitle) pageTitle.textContent = meta.title
   if (pageDesc) pageDesc.textContent = meta.desc
@@ -173,7 +176,7 @@ function render() {
     shopBar?.classList.add('hidden')
     collectionsSec?.classList.remove('hidden')
     grid.innerHTML = ''; pagesEl.innerHTML = ''
-    if (countEl) countEl.textContent = `${products.length} Products`
+    if (countEl) countEl.textContent = `${allProducts.length} Products`
     renderCollections()
     return
   }
@@ -201,22 +204,27 @@ function render() {
     return
   }
 
+  grid.className = 'grid scene-3d'
+
   grid.innerHTML = pageItems.map(p => {
     const isSale = p.oldPrice != null || (p.tag && p.tag.startsWith('-'))
-    return `<div class="card" data-id="${p.id}">
-      <div class="card-img">
-        <img src="${p.image}" alt="${p.name}" loading="lazy">
-        ${p.tag ? `<span class="tag ${isSale ? 'sale' : p.tag === 'New' ? 'new' : 'best'}">${p.tag}</span>` : ''}
-        <div class="card-quickview">Quick View</div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">${p.name}</div>
-        <div class="card-cat">${p.category}</div>
-        <div class="card-price">${isSale ? `<span class="sale">$${p.price}</span> <span class="old">$${p.oldPrice}</span>` : `$${p.price}`}</div>
-        <div class="card-rating">${'★'.repeat(Math.floor(p.rating || 4))}${(p.rating % 1 >= 0.5) ? '½' : ''} <span>(${p.reviews || 0})</span></div>
-        <div class="card-swatches">${p.colors.map(c => `<span class="c-dot" style="background:${c.h}" title="${c.n}"></span>`).join('')}</div>
-        <div class="card-sizes">${p.sizes.map(s => `<span class="c-size">${s}</span>`).join('')}</div>
-        <button class="add-btn" data-id="${p.id}" data-size="${p.sizes[0]}" data-color='${JSON.stringify(p.colors[0])}'>Add to Bag</button>
+    const floatClass = p.isNew ? 'is-new' : p.featured ? 'is-featured' : ''
+    return `<div class="card ${floatClass}" data-id="${p.id}">
+      <div class="card-inner">
+        <div class="card-img">
+          <img src="${p.image}" alt="${p.name}" loading="lazy">
+          ${p.tag ? `<span class="tag ${isSale ? 'sale' : p.tag === 'New' ? 'new' : 'best'}">${p.tag}</span>` : ''}
+          <div class="card-quickview">Quick View</div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${p.name}</div>
+          <div class="card-cat">${p.category}</div>
+          <div class="card-price">${isSale ? `<span class="sale">$${p.price}</span> <span class="old">$${p.oldPrice}</span>` : `$${p.price}`}</div>
+          <div class="card-rating">${'★'.repeat(Math.floor(p.rating || 4))}${(p.rating % 1 >= 0.5) ? '½' : ''} <span>(${p.reviews || 0})</span></div>
+          <div class="card-swatches">${p.colors.map(c => `<span class="c-dot" style="background:${c.h}" title="${c.n}"></span>`).join('')}</div>
+          <div class="card-sizes">${p.sizes.map(s => `<span class="c-size">${s}</span>`).join('')}</div>
+          <button class="add-btn" data-id="${p.id}" data-size="${p.sizes[0]}" data-color='${JSON.stringify(p.colors[0])}'>Add to Bag</button>
+        </div>
       </div>
     </div>`
   }).join('')
@@ -224,6 +232,7 @@ function render() {
   renderPages(totalPages)
   bindCardClicks()
   bindProductInteractions()
+  initScrollReveal()
 }
 
 function bindCardClicks() {
@@ -231,7 +240,7 @@ function bindCardClicks() {
     card.addEventListener('click', e => {
       if (e.target.closest('.add-btn') || e.target.closest('.c-dot') || e.target.closest('.c-size')) return
       const id = +card.dataset.id
-      const prod = products.find(p => p.id === id)
+      const prod = allProducts.find(p => p.id === id)
       if (prod) openProductModal(prod)
     })
   })
@@ -239,20 +248,110 @@ function bindCardClicks() {
     el.addEventListener('click', e => {
       e.stopPropagation()
       const card = el.closest('.card')
-      const id = +card.dataset.id
-      const prod = products.find(p => p.id === id)
+      const prod = allProducts.find(p => p.id === +card.dataset.id)
       if (prod) openProductModal(prod)
     })
   })
+  initTilt3D()
+}
+
+function initTilt3D() {
+  const cards = grid.querySelectorAll('.card')
+  let ticking = false
+
+  cards.forEach(card => {
+    let rect = card.getBoundingClientRect()
+
+    /* Shine overlay */
+    let shine = card.querySelector('.card-shine')
+    if (!shine) {
+      shine = document.createElement('div')
+      shine.className = 'card-shine'
+      card.appendChild(shine)
+    }
+
+    const updateRect = () => rect = card.getBoundingClientRect()
+
+    card.addEventListener('mouseenter', updateRect)
+
+    card.addEventListener('mousemove', e => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * -2
+        const rotateY = x * 8
+        const rotateX = y * 8
+        card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`
+
+        const mx = ((e.clientX - rect.left) / rect.width) * 100
+        const my = ((e.clientY - rect.top) / rect.height) * 100
+        shine.style.setProperty('--mx', mx + '%')
+        shine.style.setProperty('--my', my + '%')
+
+        ticking = false
+      })
+    })
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)'
+    })
+  })
+}
+
+function initScrollReveal() {
+  const cards = grid.querySelectorAll('.card')
+  if (!cards.length) return
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const delay = Array.from(cards).indexOf(entry.target) * 60
+        entry.target.style.transitionDelay = delay + 'ms'
+        entry.target.classList.add('revealed')
+        obs.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
+
+  cards.forEach(card => {
+    card.setAttribute('data-reveal', '')
+    obs.observe(card)
+  })
+}
+
+function initBgParticles() {
+  if (document.querySelector('.bg-particles')) return
+  const container = document.createElement('div')
+  container.className = 'bg-particles'
+  document.body.appendChild(container)
+
+  const shapes = ['50%', '40% 60%', '30% 70% 30%', '60% 40% 60% 40% / 60% 30% 70% 40%']
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div')
+    p.className = 'bg-particle'
+    const size = 20 + Math.random() * 60
+    p.style.width = size + 'px'
+    p.style.height = size + 'px'
+    p.style.left = Math.random() * 100 + '%'
+    p.style.top = Math.random() * 100 + '%'
+    p.style.borderRadius = shapes[i % shapes.length]
+    p.style.background = i % 2 === 0 ? '#111' : '#e84747'
+    p.style.animation = `particleFloat ${8 + Math.random() * 10}s ease-in-out infinite`
+    p.style.animationDelay = -(Math.random() * 12) + 's'
+    container.appendChild(p)
+
+    requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('vis')))
+  }
 }
 
 function bindProductInteractions() {
   grid.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation()
-      const prod = products.find(p => p.id === +btn.dataset.id)
+      const prod = allProducts.find(p => p.id === +btn.dataset.id)
       if (!prod) return
-      const user = getUser()
+      const user = getCachedUser()
       if (!user) {
         openAccountModal(() => addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color)))
         return
@@ -295,14 +394,13 @@ function renderPages(total) {
 
 function renderCollections() {
   if (!collectionsSec) return
-  const sec = collectionsSec
-  sec.classList.remove('hidden')
-  sec.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#" class="bread-link">Home</a> / Collections</div><h1>Collections</h1><p>Curated by vibe. Designed for life.</p></div>
-  <div class="col-grid">${COLLECTIONS.map(c => {
-    const prodCount = products.filter(p => p.collection === c.id).length
+  collectionsSec.classList.remove('hidden')
+  collectionsSec.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#" class="bread-link">Home</a> / Collections</div><h1>Collections</h1><p>Curated by vibe. Designed for life.</p></div>
+  <div class="col-grid">${LOCAL_COLLECTIONS.map(c => {
+    const prodCount = allProducts.filter(p => p.collection === c.id).length
     return `<div class="col-card" data-collection="${c.id}"><div class="col-bg" style="background:${c.bg};color:${c.text}">${c.icon}</div><div class="col-ov"></div><div class="col-txt"><h3>${c.name}</h3><p>${prodCount} designs.</p><span class="col-btn">Shop Now</span></div></div>`
   }).join('')}</div>`
-  sec.querySelectorAll('.col-card').forEach(el => {
+  collectionsSec.querySelectorAll('.col-card').forEach(el => {
     el.addEventListener('click', () => {
       state.view = 'collection'; state.collection = el.dataset.collection
       state.categories = ['All Tees']; state.page = 1
@@ -354,18 +452,13 @@ document.querySelectorAll('.filter-price input').forEach(cb => {
   })
 })
 
-addEventListener('cart:update', () => {
-  if (cartCount) cartCount.textContent = getCartCount()
-  renderCart()
-})
-
 function openProductModal(p) {
   const overlay = document.createElement('div'); overlay.className = 'modal-overlay'
   const modal = document.createElement('div'); modal.className = 'product-modal'
   const isSale = p.oldPrice != null || (p.tag && p.tag.startsWith('-'))
   const stars = '★'.repeat(Math.floor(p.rating || 4)) + ((p.rating % 1 >= 0.5) ? '½' : '')
 
-  modal.innerHTML = `<button class="modal-close">✕</button>
+  modal.innerHTML = `<button class="modal-close">\u2715</button>
     <div class="modal-inner">
       <div class="modal-img"><img src="${p.image}" alt="${p.name}"></div>
       <div class="modal-info">
@@ -407,36 +500,24 @@ function openProductModal(p) {
     })
   })
   modal.querySelector('.modal-add-btn').addEventListener('click', function () {
-    const prod = products.find(x => x.id === +this.dataset.id)
+    const prod = allProducts.find(x => x.id === +this.dataset.id)
     if (!prod) return
-    const user = getUser()
+    const user = getCachedUser()
     if (!user) { close(); openAccountModal(() => addToCart(prod, this.dataset.size, JSON.parse(this.dataset.color))); return }
     addToCart(prod, this.dataset.size, JSON.parse(this.dataset.color)); close()
   })
 }
 
 let checkoutOpen = false
-let currentUser = null
-
-function getUser() {
-  if (currentUser) return currentUser
-  try { currentUser = JSON.parse(localStorage.getItem('kainos_user')) } catch {}
-  return currentUser
-}
-
-function saveUser(u) {
-  currentUser = u
-  localStorage.setItem('kainos_user', JSON.stringify(u))
-}
 
 function openAccountModal(onSuccess) {
   const items = getCart()
-  const user = getUser()
+  const user = getCachedUser()
   const overlay = document.createElement('div'); overlay.className = 'modal-overlay'
   const modal = document.createElement('div'); modal.className = 'acct-modal'
   const tab = user ? 'signin' : 'signup'
 
-  modal.innerHTML = `<button class="modal-close">✕</button>
+  modal.innerHTML = `<button class="modal-close">\u2715</button>
     <div class="acct-logo">kainos<span>.</span></div>
     <h2>${user ? 'Welcome back' : 'Create your account'}</h2>
     <p class="acct-sub">${user ? 'Sign in to continue your order.' : 'Save your details for faster checkout.'}</p>
@@ -482,61 +563,62 @@ function openAccountModal(onSuccess) {
     })
   })
 
-  modal.querySelector('#acct-signup-btn').addEventListener('click', function () {
+  modal.querySelector('#acct-signup-btn').addEventListener('click', async function () {
     const name = modal.querySelector('#acct-name').value.trim()
     const email = modal.querySelector('#acct-email').value.trim()
     const pass = modal.querySelector('#acct-pass').value
     if (!name || !email || !pass) { showToast('Please fill in all fields.'); return }
     if (!email.includes('@')) { showToast('Please enter a valid email.'); return }
     if (pass.length < 6) { showToast('Password must be at least 6 characters.'); return }
-    this.textContent = 'Sending verification...'; this.disabled = true
+    this.textContent = 'Creating account...'; this.disabled = true
 
-    const code = String(Math.floor(100000 + Math.random() * 900000))
-    sendVerificationEmail(name, email, code).then(() => {
+    try {
+      await signUp(name, email, pass)
+      if (isSupabased()) {
+        setCurrentUser({ name, email, verified: false })
+        showToast(`Account created! Welcome, ${name}!`)
+        close()
+        if (onSuccess) setTimeout(onSuccess, 350)
+      } else {
+        const code = String(Math.floor(100000 + Math.random() * 900000))
+        sendVerificationEmail(name, email, code).then(() => {
+          this.textContent = 'Create Account & Continue'; this.disabled = false
+          close()
+          setTimeout(() => openVerifyModal(name, email, code, onSuccess), 350)
+        })
+      }
+    } catch (err) {
+      showToast(err.message)
       this.textContent = 'Create Account & Continue'; this.disabled = false
-      close()
-      setTimeout(() => openVerifyModal(name, email, code, onSuccess), 350)
-    })
-  })
-
-  modal.querySelector('#acct-signin-btn').addEventListener('click', function () {
-    const email = modal.querySelector('#acct-email-signin').value.trim()
-    const pass = modal.querySelector('#acct-pass-signin').value
-    if (!email || !pass) { showToast('Please enter email and password.'); return }
-    const existing = getUser()
-    if (existing && existing.email === email) {
-      showToast(`Welcome back, ${existing.name}!`)
-      close()
-      if (onSuccess) setTimeout(onSuccess, 350)
-      else setTimeout(openCheckoutModal, 350)
-    } else if (existing && existing.email !== email) {
-      saveUser({ ...existing, email })
-      showToast('Signed in!')
-      close()
-      if (onSuccess) setTimeout(onSuccess, 350)
-      else setTimeout(openCheckoutModal, 350)
-    } else {
-      showToast('No account found. Please sign up.')
     }
   })
 
-  const acctSkip = modal.querySelector('#acct-skip-link')
-  if (acctSkip) {
-    acctSkip.addEventListener('click', e => {
-      e.preventDefault()
+  modal.querySelector('#acct-signin-btn').addEventListener('click', async function () {
+    const email = modal.querySelector('#acct-email-signin').value.trim()
+    const pass = modal.querySelector('#acct-pass-signin').value
+    if (!email || !pass) { showToast('Please enter email and password.'); return }
+    this.textContent = 'Signing in...'; this.disabled = true
+
+    try {
+      const user = await signIn(email, pass)
+      setCurrentUser(user)
+      showToast(`Welcome back, ${user.name}!`)
       close()
       if (onSuccess) setTimeout(onSuccess, 350)
       else setTimeout(openCheckoutModal, 350)
-    })
-  }
+    } catch (err) {
+      showToast(err.message)
+      this.textContent = 'Sign In & Continue'; this.disabled = false
+    }
+  })
 }
 
 function openVerifyModal(name, email, code, onSuccess) {
   const overlay = document.createElement('div'); overlay.className = 'modal-overlay'
   const modal = document.createElement('div'); modal.className = 'verify-modal'
 
-  modal.innerHTML = `<button class="modal-close">✕</button>
-    <div class="verify-icon">✉</div>
+  modal.innerHTML = `<button class="modal-close">\u2715</button>
+    <div class="verify-icon">\u2709</div>
     <h2>Verify your email</h2>
     <p class="verify-sub">We sent a 6-digit code to <strong>${email}</strong></p>
     <div class="verify-code-wrap">
@@ -573,12 +655,13 @@ function openVerifyModal(name, email, code, onSuccess) {
     })
   })
 
-  modal.querySelector('#verify-btn').addEventListener('click', function () {
+  modal.querySelector('#verify-btn').addEventListener('click', async function () {
     const entered = [...document.querySelectorAll('.verify-code')].map(i => i.value).join('')
     if (entered.length !== 6) { showToast('Please enter the full 6-digit code.'); return }
-    saveUser({ name, email, verified: entered === code })
+    const user = await verifyUser(name, email, code, entered)
+    setCurrentUser(user)
     if (entered === code) {
-      showToast(`✓ Email verified! Welcome, ${name}!`)
+      showToast(`Email verified! Welcome, ${name}!`)
     } else {
       showToast('Code invalid. Try again.', 2500)
       return
@@ -590,26 +673,19 @@ function openVerifyModal(name, email, code, onSuccess) {
 
   modal.querySelector('#verify-skip').addEventListener('click', e => {
     e.preventDefault()
-    saveUser({ name, email, verified: false })
+    const user = verifyUser(name, email, code, '')
+    setCurrentUser(user)
     close()
     if (onSuccess) setTimeout(onSuccess, 350)
     else setTimeout(openCheckoutModal, 350)
   })
 }
 
-renderCart = (function (orig) {
-  return function () {
-    orig.call(this)
-    const btn = document.querySelector('.cart-checkout')
-    if (btn) {
-      btn.onclick = function () {
-        const user = getUser()
-        if (!user) { openAccountModal(openCheckoutModal); return }
-        openCheckoutModal()
-      }
-    }
-  }
-})(renderCart)
+addEventListener('checkout:open', () => {
+  const user = getCachedUser()
+  if (!user) { openAccountModal(openCheckoutModal); return }
+  openCheckoutModal()
+})
 
 function detectCard(num) {
   const c = num.replace(/\s/g, '')
@@ -629,27 +705,28 @@ function fmtCard(val) {
   return r
 }
 
-function openCheckoutModal() {
+async function openCheckoutModal() {
   const items = getCart()
   if (!items.length) return
   checkoutOpen = true
   const total = getCartTotal()
   const overlay = document.createElement('div'); overlay.className = 'modal-overlay'
   const modal = document.createElement('div'); modal.className = 'checkout-modal'
+  const user = getCachedUser()
 
-  modal.innerHTML = `<button class="modal-close">✕</button>
+  modal.innerHTML = `<button class="modal-close">\u2715</button>
     <div class="checkout-layout">
       <div class="checkout-main">
         <h2>Checkout</h2>
 
         <div class="checkout-sec">
           <h3>Contact</h3>
-          <input type="email" class="chk-inp" placeholder="Email address" id="chk-email" value="${getUser() ? getUser().email : ''}">
+          <input type="email" class="chk-inp" placeholder="Email address" id="chk-email" value="${user ? user.email : ''}">
         </div>
 
         <div class="checkout-sec">
           <h3>Delivery</h3>
-          <div class="chk-row"><input type="text" class="chk-inp" placeholder="First name" id="chk-first" value="${getUser() ? getUser().name.split(' ')[0] : ''}"><input type="text" class="chk-inp" placeholder="Last name" id="chk-last" value="${getUser() && getUser().name.split(' ').length > 1 ? getUser().name.split(' ').slice(1).join(' ') : ''}"></div>
+          <div class="chk-row"><input type="text" class="chk-inp" placeholder="First name" id="chk-first" value="${user && user.name ? user.name.split(' ')[0] : ''}"><input type="text" class="chk-inp" placeholder="Last name" id="chk-last" value="${user && user.name && user.name.split(' ').length > 1 ? user.name.split(' ').slice(1).join(' ') : ''}"></div>
           <input type="text" class="chk-inp" placeholder="Address" id="chk-addr">
           <div class="chk-row"><input type="text" class="chk-inp" placeholder="City" id="chk-city"><input type="text" class="chk-inp" placeholder="ZIP code" id="chk-zip" style="max-width:140px"></div>
         </div>
@@ -665,7 +742,7 @@ function openCheckoutModal() {
           <div class="pay-form" id="pay-form-card">
             <div class="card-preview" id="card-preview">
               <div class="card-chip"></div>
-              <div class="card-number" id="card-display">•••• •••• •••• ••••</div>
+              <div class="card-number" id="card-display">\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022</div>
               <div class="card-bottom"><span id="card-expiry">MM/YY</span><span id="card-brand-name">Card</span></div>
             </div>
             <div class="chk-field"><label>Card number</label><input type="text" class="chk-inp" id="chk-card" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number"><span class="card-badge" id="card-badge"></span></div>
@@ -691,7 +768,7 @@ function openCheckoutModal() {
 
       <div class="checkout-side">
         <h3>Order Summary</h3>
-        ${items.map(i => `<div class="chk-side-item"><img src="${i.image}" alt=""><div><div class="chk-side-name">${i.name}</div><div class="chk-side-meta">${i.size} / ${i.color.n} × ${i.qty}</div><div class="chk-side-price">$${(i.price * i.qty).toFixed(2)}</div></div></div>`).join('')}
+        ${items.map(i => `<div class="chk-side-item"><img src="${i.image}" alt=""><div><div class="chk-side-name">${i.name}</div><div class="chk-side-meta">${i.size} / ${i.color.n} \u00d7 ${i.qty}</div><div class="chk-side-price">$${(i.price * i.qty).toFixed(2)}</div></div></div>`).join('')}
         <div class="chk-side-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
       </div>
     </div>`
@@ -726,13 +803,13 @@ function openCheckoutModal() {
       cardPreview.style.borderColor = brand.color
       cvcInput.maxLength = brand.cvc
       const last4 = raw.slice(-4)
-      cardDisplay.textContent = brand.name === 'Amex' ? `•••• •••••• ${last4}` : `•••• •••• •••• ${last4}`
+      cardDisplay.textContent = brand.name === 'Amex' ? `\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022\u2022\u2022 ${last4}` : `\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 ${last4}`
     } else {
       cardBadge.style.display = 'none'
       brandName.textContent = 'Card'
       cardPreview.style.borderColor = '#ddd'
       cvcInput.maxLength = 3
-      cardDisplay.textContent = raw ? fmtCard(raw) : '•••• •••• •••• ••••'
+      cardDisplay.textContent = raw ? fmtCard(raw) : '\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022'
     }
   })
 
@@ -758,7 +835,7 @@ function openCheckoutModal() {
     })
   })
 
-  modal.querySelector('#chk-submit').addEventListener('click', function () {
+  modal.querySelector('#chk-submit').addEventListener('click', async function () {
     const errs = []
     const email = modal.querySelector('#chk-email').value.trim()
     const first = modal.querySelector('#chk-first').value.trim()
@@ -794,16 +871,47 @@ function openCheckoutModal() {
     }
     el.style.display = 'none'
     this.textContent = 'Processing...'; this.disabled = true
-    setTimeout(() => {
+
+    try {
+      if (isSupabased() && supabase) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const orderId = 'ORD-' + Date.now().toString(36).toUpperCase()
+          const orderPayload = {
+            id: orderId,
+            user_id: user.id,
+            customer_name: first + ' ' + last,
+            email,
+            total,
+            status: 'Confirmed',
+            shipping_address: { addr, city: modal.querySelector('#chk-city').value.trim(), zip: modal.querySelector('#chk-zip').value.trim() },
+          }
+          const { error: orderError } = await supabase.from('orders').insert(orderPayload)
+          if (!orderError) {
+            const orderItems = items.map(i => ({
+              order_id: orderId,
+              product_id: i.id,
+              name: i.name,
+              price: i.price,
+              size: i.size,
+              color: i.color,
+              quantity: i.qty,
+              image: i.image,
+            }))
+            await supabase.from('order_items').insert(orderItems)
+          }
+        }
+      }
+
       const order = {
         id: 'ORD-' + Date.now().toString(36).toUpperCase(),
-        customer: getUser() ? getUser().name : (modal.querySelector('#chk-first').value.trim() + ' ' + modal.querySelector('#chk-last').value.trim()),
-        email: modal.querySelector('#chk-email').value.trim(),
+        customer: first + ' ' + last,
+        email,
         items: getCart(),
-        total: getCartTotal(),
+        total,
         status: 'Confirmed',
         date: new Date().toISOString(),
-        shipping: { addr: modal.querySelector('#chk-addr').value.trim(), city: modal.querySelector('#chk-city').value.trim(), zip: modal.querySelector('#chk-zip').value.trim() },
+        shipping: { addr, city: modal.querySelector('#chk-city').value.trim(), zip: modal.querySelector('#chk-zip').value.trim() },
       }
       const orders = JSON.parse(localStorage.getItem('kainos_orders') || '[]')
       orders.unshift(order)
@@ -812,7 +920,10 @@ function openCheckoutModal() {
       dispatchEvent(new CustomEvent('cart:update'))
       close()
       showToast('Order placed! Confirmation sent to ' + order.email)
-    }, 1500)
+    } catch (err) {
+      showToast('Something went wrong. Please try again.')
+      this.textContent = 'Pay $' + total.toFixed(2); this.disabled = false
+    }
   })
 }
 
@@ -827,4 +938,23 @@ document.querySelector('.signup-form button')?.addEventListener('click', functio
   }
 })
 
-render()
+addEventListener('cart:update', () => {
+  if (cartCount) cartCount.textContent = getCartCount()
+})
+
+async function init() {
+  const user = await getCurrentUser()
+  if (user) setCurrentUser(user)
+
+  allProducts = await getProducts()
+  render()
+
+  initBgParticles()
+}
+
+init()
+
+window.addToCart = addToCart
+window.removeFromCart = removeFromCart
+window.updateQty = updateQty
+window.closeCart = closeCart
