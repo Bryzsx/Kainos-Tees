@@ -10,17 +10,24 @@ import './styles/style.css'
   if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
   const btn = document.getElementById('theme-toggle')
   if (btn) {
-    btn.textContent = saved === 'dark' ? '☀' : ''
+    const lightIcon = btn.querySelector('.theme-icon-light')
+    const darkIcon = btn.querySelector('.theme-icon-dark')
+    if (saved === 'dark') {
+      lightIcon.style.display = 'none'
+      darkIcon.style.display = 'block'
+    }
     btn.addEventListener('click', () => {
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
       if (isDark) {
         document.documentElement.removeAttribute('data-theme')
         localStorage.setItem('kainos-theme', 'light')
-        btn.textContent = '☾'
+        lightIcon.style.display = 'block'
+        darkIcon.style.display = 'none'
       } else {
         document.documentElement.setAttribute('data-theme', 'dark')
         localStorage.setItem('kainos-theme', 'dark')
-        btn.textContent = '☀'
+        lightIcon.style.display = 'none'
+        darkIcon.style.display = 'block'
       }
     })
   }
