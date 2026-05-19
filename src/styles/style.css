@@ -1013,29 +1013,116 @@ body {
 .toast.open{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* RESPONSIVE */
-@media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.col-grid{grid-template-columns:repeat(2,1fr)}.modal-inner{flex-direction:column}.modal-img{width:100%;min-height:300px}}
+@media(max-width:1024px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .col-grid{grid-template-columns:repeat(2,1fr)}
+  .modal-inner{flex-direction:column}
+  .modal-img{width:100%;min-height:300px}
+  .admin-stats{grid-template-columns:repeat(2,1fr)}
+  .admin-products{grid-template-columns:repeat(3,1fr)}
+}
 @media(max-width:768px){
-  .header{padding:14px 20px}
+  .header{padding:12px 16px}
   .nav{display:none}
   .hamburger{display:flex}
   .mobile-nav{display:flex}
-  .search-bar{padding:0 20px}
-  .search-bar.open{padding:12px 20px}
-  .page-head{padding:20px 20px 8px}
-  .shop{padding:0 20px 40px}
+  .search-bar{padding:0 16px}
+  .search-bar.open{padding:12px 16px}
+  .page-head{padding:16px 16px 8px}
+  .page-head h1{font-size:24px}
+  .page-head p{font-size:12px}
+  .shop{padding:0 16px 32px}
+  .shop-bar{flex-direction:column;align-items:flex-start;gap:8px;padding:12px 0 16px}
   .shop-inner{flex-direction:column}
-  .sidebar{width:100%;display:flex;flex-wrap:wrap;gap:12px}
-  .sidebar section{flex:1;min-width:120px;margin-bottom:0}
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .col-grid{grid-template-columns:1fr;padding:0 20px 40px}
-  .signup{margin:40px 20px 0;padding:32px 20px}
-  .footer{padding:32px 20px 16px}
-  .footer-grid{grid-template-columns:1fr 1fr}
+  .sidebar{width:100%;display:none;flex-direction:column;gap:0;background:var(--color-bg-primary);padding:16px;border-radius:12px;margin-bottom:16px;border:1px solid var(--color-border)}
+  .sidebar.open{display:flex}
+  .sidebar section{flex:unset;min-width:unset;margin-bottom:16px}
+  .sidebar section:last-child{margin-bottom:0}
+  .sidebar section.hr{border-top:1px solid var(--color-border);padding-top:16px}
+  .filter-toggle{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--color-text-primary);margin-bottom:12px}
+  .filter-toggle svg{width:16px;height:16px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .card-img{margin-bottom:8px}
+  .card-body{padding:0 4px 4px}
+  .card-name{font-size:12px}
+  .card-price{font-size:13px}
+  .card-sizes{display:none}
+  .add-btn{padding:9px;font-size:10px}
+  .col-grid{grid-template-columns:1fr;padding:0 16px 32px;gap:12px}
+  .col-card{height:240px}
+  .signup{margin:32px 16px 0;padding:24px 16px}
+  .signup h2{font-size:20px}
+  .signup-form{flex-direction:column}
+  .signup-form input{width:100%}
+  .signup-form button{width:100%}
+  .footer{padding:24px 16px 16px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:24px}
   .cart-drawer{width:100%}
-  .product-modal{max-height:90vh}
-  .checkout-modal{max-height:90vh;border-radius:16px}
-  .checkout-layout{flex-direction:column;max-height:90vh}
-  .checkout-side{width:100%;border-left:none;border-top:1px solid #f0f0f0;padding:16px 24px}
-   .card-preview{min-height:110px;padding:14px}
-   .card-number{font-size:15px}
-}@media(max-width:480px){.grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.col-grid{grid-template-columns:1fr}}
+  .product-modal{max-height:95vh;width:95vw}
+  .checkout-modal{max-height:95vh;border-radius:16px;width:95vw}
+  .checkout-layout{flex-direction:column;max-height:95vh}
+  .checkout-side{width:100%;border-left:none;border-top:1px solid var(--color-border);padding:16px}
+  .card-preview{min-height:110px;padding:14px}
+  .card-number{font-size:15px}
+  .acct-modal{width:95vw}
+  .verify-modal{width:95vw}
+  .admin-sidebar{width:60px}
+  .admin-sidebar .admin-logo span,.admin-sidebar .admin-nav a span:not(.nav-icon){display:none}
+  .admin-content{padding:16px}
+  .admin-topbar{padding:12px 16px}
+  .admin-stats{grid-template-columns:repeat(2,1fr);gap:12px}
+  .admin-products{grid-template-columns:repeat(2,1fr);gap:8px}
+  .support-tickets{flex-direction:column}
+  .support-list{width:100%}
+}
+@media(max-width:480px){
+  .header{padding:10px 12px}
+  .header-actions{gap:2px}
+  .header-actions span,.header-actions button{width:36px;height:36px}
+  .header-actions button svg{width:18px;height:18px}
+  .page-head{padding:12px 12px 4px}
+  .page-head h1{font-size:20px}
+  .shop{padding:0 12px 24px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .card-img{aspect-ratio:3/4;margin-bottom:6px}
+  .card-body{padding:0 2px 2px}
+  .card-name{font-size:11px;margin-bottom:1px}
+  .card-cat{font-size:10px;margin-bottom:2px}
+  .card-price{font-size:12px;margin-bottom:2px}
+  .card-rating{font-size:10px;margin-bottom:2px}
+  .card-swatches{margin-bottom:2px}
+  .c-dot{width:12px;height:12px}
+  .card-sizes{display:none}
+  .add-btn{padding:8px;font-size:9px;border-radius:6px}
+  .col-grid{padding:0 12px 24px}
+  .col-card{height:200px}
+  .col-txt{padding:16px}
+  .col-txt h3{font-size:16px}
+  .col-txt p{font-size:11px}
+  .col-btn{padding:8px 16px;font-size:10px}
+  .signup{margin:24px 12px 0;padding:20px 12px}
+  .signup h2{font-size:18px}
+  .signup p{font-size:12px}
+  .footer{padding:20px 12px 12px}
+  .footer-grid{grid-template-columns:1fr;gap:20px}
+  .footer-brand p{max-width:100%}
+  .pages{gap:2px;margin-top:32px}
+  .pg{width:30px;height:30px;font-size:11px}
+  .product-modal{width:100vw;height:100vh;max-height:100vh;border-radius:0}
+  .checkout-modal{width:100vw;height:100vh;max-height:100vh;border-radius:0}
+  .modal-img{min-height:200px}
+  .modal-info{padding:20px}
+  .modal-info h2{font-size:18px}
+  .modal-price{font-size:18px}
+  .cart-drawer{width:100%}
+  .cart-header{padding:16px}
+  .cart-items{padding:12px 16px}
+  .cart-footer{padding:12px 16px 20px}
+  .admin-stats{grid-template-columns:1fr}
+  .admin-products{grid-template-columns:1fr}
+}
+@media(max-width:360px){
+  .grid{grid-template-columns:1fr}
+  .col-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+}

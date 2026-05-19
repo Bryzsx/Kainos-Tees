@@ -1371,16 +1371,26 @@ function initARIAStates() {
      })
    }
    
-   // Search toggle
-   const searchToggle = document.getElementById('search-toggle')
-   const searchBar = document.getElementById('search-bar')
-   if (searchToggle && searchBar) {
-     searchToggle.addEventListener('click', () => {
-       const isOpen = searchBar.classList.toggle('open')
-       searchToggle.setAttribute('aria-expanded', isOpen)
-       searchBar.setAttribute('aria-hidden', !isOpen)
-     })
-   }
+    // Search toggle
+    const searchToggle = document.getElementById('search-toggle')
+    const searchBar = document.getElementById('search-bar')
+    if (searchToggle && searchBar) {
+      searchToggle.addEventListener('click', () => {
+        const isOpen = searchBar.classList.toggle('open')
+        searchToggle.setAttribute('aria-expanded', isOpen)
+        searchBar.setAttribute('aria-hidden', !isOpen)
+      })
+    }
+    
+    // Filter toggle (mobile)
+    const filterToggle = document.getElementById('filter-toggle')
+    const sidebar = document.getElementById('sidebar')
+    if (filterToggle && sidebar) {
+      filterToggle.addEventListener('click', () => {
+        const isOpen = sidebar.classList.toggle('open')
+        filterToggle.setAttribute('aria-expanded', isOpen)
+      })
+    }
    
    // Account button (placeholder)
    const accountBtn = document.getElementById('account-btn')
