@@ -4,6 +4,28 @@ import { getCurrentUser, getCachedUser, setCurrentUser, signUp, signIn, verifyUs
 import { supabase, isSupabased } from './lib/supabase.js'
 import './styles/style.css'
 
+// Theme toggle
+(function initTheme() {
+  const saved = localStorage.getItem('kainos-theme')
+  if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
+  const btn = document.getElementById('theme-toggle')
+  if (btn) {
+    btn.textContent = saved === 'dark' ? '☀' : ''
+    btn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme')
+        localStorage.setItem('kainos-theme', 'light')
+        btn.textContent = '☾'
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        localStorage.setItem('kainos-theme', 'dark')
+        btn.textContent = '☀'
+      }
+    })
+  }
+})()
+
 const EMAILJS_CONFIG = {
   publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_EMAILJS_PUBLIC_KEY',
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_EMAILJS_SERVICE_ID',
