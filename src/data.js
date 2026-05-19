@@ -83,25 +83,31 @@ export async function getProducts() {
   if (cachedProducts) return cachedProducts
 
   if (isSupabased()) {
-    const { data, error } = await supabase.from('products').select('*').order('id')
-    if (!error && data?.length) {
-      cachedProducts = data.map(p => ({
-        id: p.id,
-        name: p.name,
-        category: p.category,
-        price: p.price,
-        oldPrice: p.old_price,
-        tag: p.tag,
-        collection: p.collection_id,
-        sizes: p.sizes || [],
-        colors: p.colors || [],
-        image: p.image,
-        featured: p.featured,
-        isNew: p.is_new,
-        rating: p.rating,
-        reviews: p.reviews,
-      }))
-      return cachedProducts
+    try {
+      const fetchPromise = supabase.from('products').select('*').order('id')
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise])
+      if (!error && data?.length) {
+        cachedProducts = data.map(p => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          price: p.price,
+          oldPrice: p.old_price,
+          tag: p.tag,
+          collection: p.collection_id,
+          sizes: p.sizes || [],
+          colors: p.colors || [],
+          image: p.image,
+          featured: p.featured,
+          isNew: p.is_new,
+          rating: p.rating,
+          reviews: p.reviews,
+        }))
+        return cachedProducts
+      }
+    } catch (e) {
+      console.warn('Supabase fetch failed, using local data:', e)
     }
   }
 

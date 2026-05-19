@@ -1311,26 +1311,35 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 async function init() {
-   const user = await getCurrentUser()
-   if (user) setCurrentUser(user)
+   try {
+     const user = await getCurrentUser()
+     if (user) setCurrentUser(user)
 
-   // Show loading skeleton
-   showLoadingSkeleton()
-   
-   allProducts = await getProducts()
-   render()
+     // Show loading skeleton
+     showLoadingSkeleton()
+     
+     allProducts = await getProducts()
+     render()
 
-   initBgParticles()
-   
-   // Initialize ARIA states
-   initARIAStates()
-   
-   // Initialize connection status indicator
-   initConnectionStatus()
-   
-   // Check if we can show install prompt
-   if (deferredPrompt) {
-     showInstallPromotion();
+     initBgParticles()
+     
+     // Initialize ARIA states
+     initARIAStates()
+     
+     // Initialize connection status indicator
+     initConnectionStatus()
+     
+     // Check if we can show install prompt
+     if (deferredPrompt) {
+       showInstallPromotion();
+     }
+   } catch (e) {
+     console.error('Init error:', e)
+     // Fallback: render with empty products
+     allProducts = []
+     render()
+     initARIAStates()
+     initConnectionStatus()
    }
  }
 
@@ -1351,10 +1360,10 @@ function updateConnectionStatus() {
    if (!statusEl) return
    
    if (navigator.onLine) {
-     statusEl.textContent = 'Online'
+     statusEl.innerHTML = '<span class="status-dot"></span>'
      statusEl.className = 'online'
    } else {
-     statusEl.textContent = 'Offline'
+     statusEl.innerHTML = '<span class="status-dot"></span>'
      statusEl.className = 'offline'
    }
 }
