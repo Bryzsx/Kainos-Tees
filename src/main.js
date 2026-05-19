@@ -450,7 +450,7 @@ async function render() {
           <div class="card-rating">${'★'.repeat(Math.floor(p.rating || 4))}${(p.rating % 1 >= 0.5) ? '½' : ''} <span>(${p.reviews || 0})</span></div>
           <div class="card-swatches">${p.colors.map(c => `<span class="c-dot" style="background:${c.h}" title="${c.n}"></span>`).join('')}</div>
           <div class="card-sizes">${p.sizes.map(s => `<span class="c-size">${s}</span>`).join('')}</div>
-          <button class="add-btn" data-id="${p.id}" data-size="${p.sizes[0]}" data-color='${JSON.stringify(p.colors[0])}'>Add to Bag</button>
+          <button class="add-btn" data-id="${p.id}" data-size="${p.sizes[0]}" data-color='${JSON.stringify(p.colors[0])}'>+</button>
         </div>
       </div>
     </div>`
