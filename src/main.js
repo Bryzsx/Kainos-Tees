@@ -687,7 +687,7 @@ function openProductModal(p) {
 
   modal.innerHTML = `<button class="modal-close">\u2715</button>
     <div class="modal-inner">
-      <div class="modal-img"><img src="${p.image}" alt="${p.name}"></div>
+      <div class="modal-img"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>
       <div class="modal-info">
         <div class="modal-cat">${p.category}</div>
         <h2>${p.name}</h2>
@@ -1001,7 +1001,7 @@ async function openCheckoutModal() {
 
       <div class="checkout-side">
         <h3>Order Summary</h3>
-        ${items.map(i => `<div class="chk-side-item"><img src="${i.image}" alt=""><div><div class="chk-side-name">${i.name}</div><div class="chk-side-meta">${i.size} / ${i.color.n} \u00d7 ${i.qty}</div><div class="chk-side-price">$${(i.price * i.qty).toFixed(2)}</div></div></div>`).join('')}
+        ${items.map(i => `<div class="chk-side-item"><img src="${i.image}" alt="" loading="lazy"><div><div class="chk-side-name">${i.name}</div><div class="chk-side-meta">${i.size} / ${i.color.n} \u00d7 ${i.qty}</div><div class="chk-side-price">$${(i.price * i.qty).toFixed(2)}</div></div></div>`).join('')}
         <div class="chk-side-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
       </div>
     </div>`
