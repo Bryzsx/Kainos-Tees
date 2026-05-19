@@ -742,9 +742,9 @@ body {
 .sidebar section{margin-bottom:28px}
 .sidebar section.hr{border-top:1px solid #f0f0f0;padding-top:20px}
 .filter-group{list-style:none}
-.filter-group li{margin-bottom:4px}
-.filter-group label{display:flex;align-items:center;gap:10px;font-size:13px;color:#444;cursor:pointer;transition:transform .2s;transform:perspective(400px) translateZ(0);padding:4px 0}
-.filter-group label:hover{transform:perspective(400px) translateZ(3px)}
+.filter-group li{margin-bottom:2px}
+.filter-group label{display:flex;align-items:center;gap:10px;font-size:13px;color:#444;cursor:pointer;padding:6px 0;line-height:1}
+.filter-group label:hover{color:#111}
 .filter-group input[type=checkbox]{width:16px;height:16px;accent-color:#111;cursor:pointer;flex-shrink:0;margin:0}
 .swatch-group{display:flex;flex-wrap:wrap;gap:6px}
 .swatch{width:24px;height:24px;border-radius:50%;border:1.5px solid #ddd;cursor:pointer;transition:border-color .15s,transform .2s;transform:perspective(400px) translateZ(0)}
