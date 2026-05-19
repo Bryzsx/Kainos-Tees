@@ -578,15 +578,49 @@ function bindProductInteractions() {
       e.stopPropagation()
       const prod = allProducts.find(p => p.id === +btn.dataset.id)
       if (!prod) return
+      
+      // Add floating +1 animation
+      const floatingOne = document.createElement('span')
+      floatingOne.className = 'floating-one'
+      floatingOne.textContent = '+1'
+      btn.appendChild(floatingOne)
+      
+      // Remove floating animation after it ends
+      floatingOne.addEventListener('animationend', () => {
+        floatingOne.remove()
+      })
+      
       btn.classList.add('added')
       btn.textContent = '✓'
       const user = getCachedUser()
       if (!user) {
-        openAccountModal(() => { addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color)); setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+' }, 600) })
+        openAccountModal(() => { 
+          addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color)); 
+          setTimeout(() => { 
+            btn.classList.remove('added'); 
+            btn.textContent = '+' 
+          }, 600) 
+        })
         return
       }
       addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color))
-      setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+' }, 600)
+      setTimeout(() => { 
+        btn.classList.remove('added'); 
+        btn.textContent = '+' 
+      }, 600)
+    })
+    
+    // Add press scale animation on mousedown
+    btn.addEventListener('mousedown', () => {
+      btn.style.transform = 'scale(0.95)'
+    })
+    
+    // Reset scale on mouseup/mouseleave
+    btn.addEventListener('mouseup', () => {
+      btn.style.transform = 'scale(1)'
+    })
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'scale(1)'
     })
   })
   grid.querySelectorAll('.c-size').forEach(el => {
