@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   root: '.',
@@ -12,4 +13,40 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'sw.js',
+      registerType: 'autoUpdate',
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
+      manifest: {
+        name: 'Kainos Tees — Premium T-Shirts',
+        short_name: 'Kainos',
+        description: 'Premium t-shirts for the bold, the creative, and the unapologetically original.',
+        start_url: 'index.html',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#111111',
+        orientation: 'portrait-primary',
+        categories: ['shopping', 'fashion', 'lifestyle'],
+        icons: [
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icons/icon.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any' },
+        ],
+        screenshots: [
+          { src: 'screenshots/1-wide.png', sizes: '1280x720', type: 'image/png', form_factor: 'wide', label: 'Homepage showing featured products' },
+          { src: 'screenshots/2-narrow.png', sizes: '720x1280', type: 'image/png', form_factor: 'narrow', label: 'Product listing with filters' },
+          { src: 'screenshots/3-wide.png', sizes: '1280x720', type: 'image/png', form_factor: 'wide', label: 'Product detail view' },
+        ],
+        shortcuts: [
+          { name: 'Shop New Arrivals', short_name: 'New', description: 'Browse the latest t-shirt drops', url: '/new-arrivals.html', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'View Cart', short_name: 'Cart', description: 'Review items in your shopping bag', url: '/cart.html', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
+        ],
+      },
+    }),
+  ],
 })

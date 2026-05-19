@@ -95,11 +95,5 @@
 </div>
 
 <script type="module" src="/src/admin.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  const scope = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1)
-  navigator.serviceWorker.register('sw.js', { scope })
-}
-</script>
 </body>
 </html>

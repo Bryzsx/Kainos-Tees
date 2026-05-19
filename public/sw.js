@@ -1,42 +1,21 @@
-const PRECACHE_CACHE = 'kainos-precache-v1'
-const RUNTIME_CACHE = 'kainos-runtime-v1'
+const CACHE_PREFIX = 'kainos'
+const RUNTIME_CACHE = `${CACHE_PREFIX}-runtime-v1`
 
 const BASE = (() => {
   const path = self.location.pathname
   return path.substring(0, path.lastIndexOf('/') + 1)
 })()
 
-const PRECACHE_URLS = [
-  'index.html',
-  'admin.html',
-  'offline.html',
-  'manifest.json',
-  'icons/icon-192.png',
-  'icons/icon-512.png',
-  'icons/icon.svg',
-]
-
-const PRECACHE = PRECACHE_URLS.map(url => BASE + url)
-
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(PRECACHE_CACHE)
-      .then(cache => cache.addAll(PRECACHE))
-      .catch(err => {
-        console.warn('Precache partial failure, continuing:', err)
-        return caches.open(PRECACHE_CACHE)
-          .then(cache => Promise.allSettled(
-            PRECACHE.map(url =>
-              cache.add(url).catch(() => {})
-            )
-          ))
-      })
+    caches.open(`${CACHE_PREFIX}-precache-v1`)
+      .then(cache => cache.addAll(self.__WB_MANIFEST.map(entry => entry.url)))
       .then(() => self.skipWaiting())
   )
 })
 
 self.addEventListener('activate', event => {
-  const currentCaches = [PRECACHE_CACHE, RUNTIME_CACHE]
+  const currentCaches = [`${CACHE_PREFIX}-precache-v1`, RUNTIME_CACHE]
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return cacheNames.filter(cacheName => !currentCaches.includes(cacheName))
@@ -45,65 +24,6 @@ self.addEventListener('activate', event => {
     }).then(() => self.clients.claim())
   )
 })
-
-function cacheFirstNetworkFallback(request) {
-  return caches.match(request)
-    .then(cachedResponse => {
-      return cachedResponse || fetch(request)
-        .then(networkResponse => {
-          return caches.open(RUNTIME_CACHE)
-            .then(cache => {
-              cache.put(request, networkResponse.clone())
-              return networkResponse
-            })
-        })
-        .catch(() => {
-          if (request.destination === 'document') {
-            return caches.match(BASE + 'offline.html')
-          }
-          return new Response('', { status: 503, statusText: 'Service Unavailable' })
-        })
-    })
-}
-
-function networkFirstCacheFallback(request) {
-  return fetch(request)
-    .then(networkResponse => {
-      return caches.open(RUNTIME_CACHE)
-        .then(cache => {
-          cache.put(request, networkResponse.clone())
-          return networkResponse
-        })
-    })
-    .catch(() => {
-      return caches.match(request)
-        .then(cachedResponse => {
-          if (cachedResponse) return cachedResponse
-          if (request.destination === 'document') {
-            return caches.match(BASE + 'offline.html')
-          }
-          return new Response('', { status: 503, statusText: 'Service Unavailable' })
-        })
-    })
-}
-
-function staleWhileRevalidate(request) {
-  return caches.match(request)
-    .then(cachedResponse => {
-      const fetchPromise = fetch(request)
-        .then(networkResponse => {
-          return caches.open(RUNTIME_CACHE)
-            .then(cache => {
-              cache.put(request, networkResponse.clone())
-              return networkResponse
-            })
-        })
-        .catch(() => {
-          return cachedResponse || new Response('', { status: 503, statusText: 'Service Unavailable' })
-        })
-      return cachedResponse || fetchPromise
-    })
-}
 
 self.addEventListener('fetch', event => {
   const { request } = event
@@ -136,12 +56,65 @@ self.addEventListener('fetch', event => {
   }
 })
 
+function cacheFirstNetworkFallback(request) {
+  return caches.match(request)
+    .then(cachedResponse => {
+      return cachedResponse || fetch(request)
+        .then(networkResponse => {
+          return caches.open(RUNTIME_CACHE)
+            .then(cache => {
+              cache.put(request, networkResponse.clone())
+              return networkResponse
+            })
+        })
+        .catch(() => {
+          if (request.destination === 'document') {
+            return caches.match('./offline.html')
+          }
+          return new Response('', { status: 503, statusText: 'Service Unavailable' })
+        })
+    })
+}
+
+function networkFirstCacheFallback(request) {
+  return fetch(request)
+    .then(networkResponse => {
+      return caches.open(RUNTIME_CACHE)
+        .then(cache => {
+          cache.put(request, networkResponse.clone())
+          return networkResponse
+        })
+    })
+    .catch(() => {
+      return caches.match(request)
+        .then(cachedResponse => {
+          if (cachedResponse) return cachedResponse
+          return caches.match('./offline.html')
+        })
+    })
+}
+
+function staleWhileRevalidate(request) {
+  return caches.match(request)
+    .then(cachedResponse => {
+      const fetchPromise = fetch(request)
+        .then(networkResponse => {
+          return caches.open(RUNTIME_CACHE)
+            .then(cache => {
+              cache.put(request, networkResponse.clone())
+              return networkResponse
+            })
+        })
+      return cachedResponse || fetchPromise
+    })
+}
+
 self.addEventListener('push', event => {
   const title = 'Kainos Tees'
   const options = {
     body: 'New drops just landed!',
-    icon: BASE + 'icons/icon-192.png',
-    badge: BASE + 'icons/icon-192.png',
+    icon: './icons/icon-192.png',
+    badge: './icons/icon-192.png',
   }
   event.waitUntil(self.registration.showNotification(title, options))
 })
