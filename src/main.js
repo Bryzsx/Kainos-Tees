@@ -578,12 +578,15 @@ function bindProductInteractions() {
       e.stopPropagation()
       const prod = allProducts.find(p => p.id === +btn.dataset.id)
       if (!prod) return
+      btn.classList.add('added')
+      btn.textContent = '✓'
       const user = getCachedUser()
       if (!user) {
-        openAccountModal(() => addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color)))
+        openAccountModal(() => { addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color)); setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+' }, 600) })
         return
       }
       addToCart(prod, btn.dataset.size, JSON.parse(btn.dataset.color))
+      setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+' }, 600)
     })
   })
   grid.querySelectorAll('.c-size').forEach(el => {

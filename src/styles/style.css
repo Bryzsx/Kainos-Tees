@@ -812,6 +812,7 @@ body {
 .add-btn:hover::before{opacity:1}
 .add-btn:hover{background:#222;transform:translateZ(15px) scale(1.02);box-shadow:0 4px 16px rgba(0,0,0,.15)}
 .add-btn:active{transform:translateZ(5px) scale(.98)}
+.add-btn.added{background:#16a34a!important;color:#fff!important;pointer-events:none}
 
 /* 3D TAG PULSE */
 @keyframes tagPulse{0%,100%{transform:translateZ(25px) scale(1)}50%{transform:translateZ(38px) scale(1.06)}}
