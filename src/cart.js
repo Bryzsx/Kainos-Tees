@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'kainos_cart'
+const SYNC_STORAGE_KEY = 'kainos_cart_sync'
 
 export function getCart() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] } catch { return [] }
@@ -6,7 +7,29 @@ export function getCart() {
 
 export function saveCart(cart) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
+  
+  // Also save a copy for background sync
+  localStorage.setItem(SYNC_STORAGE_KEY, JSON.stringify(cart))
+  
   dispatchEvent(new CustomEvent('cart:update'))
+  
+  // Register background sync if available
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready
+      .then(registration => {
+        return registration.sync.register('sync-cart');
+      })
+      .catch(error => {
+        console.error('Background sync registration failed:', error);
+      });
+  }
+  
+  // Update cart button aria-label
+  const cartBtn = document.getElementById('cart-btn')
+  if (cartBtn) {
+    const count = getCartCount()
+    cartBtn.setAttribute('aria-label', `Cart, ${count} ${count === 1 ? 'item' : 'items'}`)
+  }
 }
 
 export function addToCart(product, size, color) {
@@ -56,12 +79,16 @@ export function renderCart() {
     document.body.appendChild(cartOverlay)
     document.body.appendChild(cartDrawer)
   }
-  if (!items.length) {
-    cartDrawer.innerHTML = `
-      <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
-      <div class="cart-empty"><p>Your bag is empty.</p></div>`
-    return
-  }
+if (!items.length) {
+   cartDrawer.innerHTML = `
+     <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
+     <div class="cart-empty">
+       <div class="empty-illustration">🛍️</div>
+       <p>Your bag is empty.</p>
+       <p>Add some items to get started!</p>
+     </div>`
+   return
+ }
   let html = `<div class="cart-header"><h3>Your Bag (${getCartCount()})</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
     <div class="cart-items">`
   items.forEach(i => {
@@ -110,9 +137,18 @@ cartOverlay.addEventListener('click', closeCart)
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart() })
 
 addEventListener('cart:update', () => {
-  const el = document.getElementById('cart-count')
-  if (el) el.textContent = getCartCount()
-  renderCart()
+   const el = document.getElementById('cart-count')
+   if (el) {
+     el.textContent = getCartCount()
+     // Trigger pulse animation
+     el.classList.add('pulse')
+     // Remove class after animation ends
+     el.addEventListener('animationend', function handler() {
+       el.classList.remove('pulse')
+       el.removeEventListener('animationend', handler)
+     }, { once: true })
+   }
+   renderCart()
 })
 
 const toast = document.createElement('div')

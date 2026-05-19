@@ -27,5 +27,48 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/1-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homepage showing featured products"
+    },
+    {
+      "src": "screenshots/2-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Product listing with filters"
+    },
+    {
+      "src": "screenshots/3-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Product detail view"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Shop New Arrivals",
+      "description": "Browse the latest t-shirt drops",
+      "url": "/new-arrivals.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "View Cart",
+      "description": "Review items in your shopping bag",
+      "url": "/cart.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Search Products",
+      "description": "Find your perfect tee",
+      "url": "/search.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

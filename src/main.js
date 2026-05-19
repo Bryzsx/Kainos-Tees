@@ -11,30 +11,223 @@ const EMAILJS_CONFIG = {
 }
 
 function sendVerificationEmail(name, email, code) {
-  if (typeof emailjs === 'undefined') {
-    console.log('EmailJS not loaded — demo mode. Code:', code)
-    showToast(`Demo: verification code sent to ${email} (${code})`)
-    return Promise.resolve(false)
-  }
-  if (EMAILJS_CONFIG.publicKey.startsWith('YOUR_')) {
-    console.log('EmailJS not configured — demo mode. Code:', code)
-    showToast(`Demo: code ${code} sent to ${email}`)
-    return Promise.resolve(false)
-  }
-  emailjs.init(EMAILJS_CONFIG.publicKey)
-  return emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
-    to_email: email,
-    to_name: name,
-    verification_code: code,
-    from_name: 'Kainos Tees',
-  }).then(() => {
-    showToast(`Verification code sent to ${email}`)
-    return true
-  }).catch(err => {
-    console.error('EmailJS error:', err)
-    showToast(`Demo: code ${code} (email send failed — check EmailJS config)`)
-    return false
-  })
+   if (typeof emailjs === 'undefined') {
+     console.log('EmailJS not loaded — demo mode. Code:', code)
+     showToast(`Demo: verification code sent to ${email} (${code})`)
+     return Promise.resolve(false)
+   }
+   if (EMAILJS_CONFIG.publicKey.startsWith('YOUR_')) {
+     console.log('EmailJS not configured — demo mode. Code:', code)
+     showToast(`Demo: code ${code} sent to ${email}`)
+     return Promise.resolve(false)
+   }
+   emailjs.init(EMAILJS_CONFIG.publicKey)
+   return emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
+     to_email: email,
+     to_name: name,
+     verification_code: code,
+     from_name: 'Kainos Tees',
+   }).then(() => {
+     showToast(`Verification code sent to ${email}`)
+     return true
+   }).catch(err => {
+     console.error('EmailJS error:', err)
+     showToast(`Demo: code ${code} (email send failed — check EmailJS config)`)
+     return false
+   })
+ }
+
+// Form validation helpers
+function setInputError(input, message) {
+   const formGroup = input.closest('.chk-field') || input.parentElement
+   // Remove existing error
+   const existingError = formGroup.querySelector('.input-error')
+   if (existingError) existingError.remove()
+   
+   // Add error message
+   const errorElement = document.createElement('div')
+   errorElement.className = 'input-error'
+   errorElement.textContent = message
+   errorElement.style.color = 'var(--color-text-error)'
+   errorElement.style.fontSize = 'var(--color-font-size-xs)'
+   errorElement.style.marginTop = '4px'
+   input.style.borderColor = 'var(--color-text-error)'
+   formGroup.appendChild(errorElement)
+   input.setAttribute('aria-invalid', 'true')
+   input.setAttribute('aria-describedby', errorElement.id || `${input.id}-error`)
+   errorElement.id = `${input.id}-error`
+}
+
+function clearFormError(input) {
+   const formGroup = input.closest('.chk-field') || input.parentElement
+   const existingError = formGroup.querySelector('.input-error')
+   if (existingError) existingError.remove()
+   input.style.borderColor = ''
+   input.removeAttribute('aria-invalid')
+   input.removeAttribute('aria-describedby')
+}
+
+function clearFormErrorById(id) {
+   const input = document.getElementById(id)
+   if (input) clearFormError(input)
+}
+
+function clearFormErrorByName(name) {
+   const inputs = document.getElementsByName(name)
+   inputs.forEach(input => clearFormError(input))
+}
+
+function clearFormErrorByClass(className) {
+   const inputs = document.getElementsByClassName(className)
+   inputs.forEach(input => clearFormError(input))
+}
+
+function clearFormErrorBySelector(selector) {
+   const inputs = document.querySelectorAll(selector)
+   inputs.forEach(input => clearFormError(input))
+}
+
+function clearFormErrorByTag(tagName) {
+   const inputs = document.getElementsByTagName(tagName)
+   inputs.forEach(input => clearFormError(input))
+}
+
+function clearFormErrorByAttribute(attrName, attrValue) {
+   const inputs = document.querySelectorAll(`[${attrName}="${attrValue}"]`)
+   inputs.forEach(input => clearFormError(input))
+}
+
+function clearFormErrorByAttributes(attrs) {
+   const selector = Object.entries(attrs).map(([key, value]) => `[${key}="${value}"]`).join('')
+   const inputs = document.querySelectorAll(selector)
+   inputs.forEach(input => clearFormError(input))
+}
+
+function clearFormInputs(inputs) {
+   inputs.forEach(input => {
+     input.value = ''
+     clearFormError(input)
+   })
+}
+
+function focusFirstError() {
+   const firstError = document.querySelector('.input-error')
+   if (firstError) {
+     const inputId = firstError.id?.replace('-error', '')
+     if (inputId) {
+       const input = document.getElementById(inputId)
+       if (input) input.focus()
+     }
+   }
+}
+
+// Form validation for account modal
+function validateSignupForm() {
+   const nameInput = document.getElementById('acct-name')
+   const emailInput = document.getElementById('acct-email')
+   const passInput = document.getElementById('acct-pass')
+   
+   clearFormError(nameInput)
+   clearFormError(emailInput)
+   clearFormError(passInput)
+   
+   let isValid = true
+   
+   if (!nameInput.value.trim()) {
+     setInputError(nameInput, 'Full name is required')
+     isValid = false
+   }
+   
+   if (!emailInput.value.trim()) {
+     setInputError(emailInput, 'Email is required')
+     isValid = false
+   } else if (!emailInput.value.includes('@')) {
+     setInputError(emailInput, 'Please enter a valid email')
+     isValid = false
+   }
+   
+   if (!passInput.value) {
+     setInputError(passInput, 'Password is required')
+     isValid = false
+   } else if (passInput.value.length < 6) {
+     setInputError(passInput, 'Password must be at least 6 characters')
+     isValid = false
+   }
+   
+   return isValid
+}
+
+function validateSigninForm() {
+   const emailInput = document.getElementById('acct-email-signin')
+   const passInput = document.getElementById('acct-pass-signin')
+   
+   clearFormError(emailInput)
+   clearFormError(passInput)
+   
+   let isValid = true
+   
+   if (!emailInput.value.trim()) {
+     setInputError(emailInput, 'Email is required')
+     isValid = false
+   } else if (!emailInput.value.includes('@')) {
+     setInputError(emailInput, 'Please enter a valid email')
+     isValid = false
+   }
+   
+   if (!passInput.value) {
+     setInputError(passInput, 'Password is required')
+     isValid = false
+   }
+   
+   return isValid
+}
+
+function showLoadingSkeleton() {
+   // Create skeleton loader for products
+   const grid = document.getElementById('product-grid')
+   if (grid) {
+     grid.innerHTML = ''
+     // Create 9 skeleton cards (3x3 grid)
+     for (let i = 0; i < 9; i++) {
+       const skeleton = document.createElement('div')
+       skeleton.className = 'skeleton-card'
+       skeleton.innerHTML = `
+         <div class="skeleton-header">
+           <div class="skeleton-img"></div>
+           <div class="skeleton-tag"></div>
+         </div>
+         <div class="skeleton-body">
+           <div class="skeleton-line"></div>
+           <div class="skeleton-line"></div>
+           <div class="skeleton-line short"></div>
+           <div class="skeleton-rating"></div>
+           <div class="skeleton-swatches"></div>
+           <div class="skeleton-sizes"></div>
+           <div class="skeleton-btn"></div>
+         </div>
+       `
+       grid.appendChild(skeleton)
+     }
+   }
+   
+   // Also show skeleton for collections section if needed
+   const collectionsSec = document.getElementById('collections-section')
+   if (collectionsSec) {
+     collectionsSec.innerHTML = ''
+     for (let i = 0; i < 3; i++) {
+       const skeleton = document.createElement('div')
+       skeleton.className = 'skeleton-col-card'
+       skeleton.innerHTML = `
+         <div class="skeleton-col-bg"></div>
+         <div class="skeleton-col-txt">
+           <div class="skeleton-line"></div>
+           <div class="skeleton-line short"></div>
+           <div class="skeleton-btn"></div>
+         </div>
+       `
+       collectionsSec.appendChild(skeleton)
+     }
+   }
 }
 
 const PER_PAGE = 9
@@ -198,11 +391,16 @@ async function render() {
 
   countEl.textContent = `${total} Product${total !== 1 ? 's' : ''}`
 
-  if (!pageItems.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:#888"><p>No products match.</p></div>`
-    pagesEl.innerHTML = ''
-    return
-  }
+   if (!pageItems.length) {
+     grid.innerHTML = `
+       <div class="empty-state">
+         <div class="empty-illustration">🔍</div>
+         <p>No products match your current filters.</p>
+         <p>Try adjusting your search or filters to see our collection.</p>
+       </div>`
+     pagesEl.innerHTML = ''
+     return
+   }
 
   grid.className = 'grid scene-3d'
 
@@ -563,14 +761,16 @@ function openAccountModal(onSuccess) {
     })
   })
 
-  modal.querySelector('#acct-signup-btn').addEventListener('click', async function () {
-    const name = modal.querySelector('#acct-name').value.trim()
-    const email = modal.querySelector('#acct-email').value.trim()
-    const pass = modal.querySelector('#acct-pass').value
-    if (!name || !email || !pass) { showToast('Please fill in all fields.'); return }
-    if (!email.includes('@')) { showToast('Please enter a valid email.'); return }
-    if (pass.length < 6) { showToast('Password must be at least 6 characters.'); return }
-    this.textContent = 'Creating account...'; this.disabled = true
+modal.querySelector('#acct-signup-btn').addEventListener('click', async function () {
+     if (!validateSignupForm()) {
+       focusFirstError()
+       return
+     }
+     
+     const name = modal.querySelector('#acct-name').value.trim()
+     const email = modal.querySelector('#acct-email').value.trim()
+     const pass = modal.querySelector('#acct-pass').value
+     this.textContent = 'Creating account...'; this.disabled = true
 
     try {
       await signUp(name, email, pass)
@@ -593,11 +793,15 @@ function openAccountModal(onSuccess) {
     }
   })
 
-  modal.querySelector('#acct-signin-btn').addEventListener('click', async function () {
-    const email = modal.querySelector('#acct-email-signin').value.trim()
-    const pass = modal.querySelector('#acct-pass-signin').value
-    if (!email || !pass) { showToast('Please enter email and password.'); return }
-    this.textContent = 'Signing in...'; this.disabled = true
+modal.querySelector('#acct-signin-btn').addEventListener('click', async function () {
+     if (!validateSigninForm()) {
+       focusFirstError()
+       return
+     }
+     
+     const email = modal.querySelector('#acct-email-signin').value.trim()
+     const pass = modal.querySelector('#acct-pass-signin').value
+     this.textContent = 'Signing in...'; this.disabled = true
 
     try {
       const user = await signIn(email, pass)
@@ -942,14 +1146,242 @@ addEventListener('cart:update', () => {
   if (cartCount) cartCount.textContent = getCartCount()
 })
 
+let deferredPrompt = null;
+let notificationPermission = Notification.permission;
+
+// Handle install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+  // Optionally, add a button or other UI to notify user that app can be installed
+  showInstallPromotion();
+});
+
+function showInstallPromotion() {
+  // You can customize this UI however you like
+  const installBtn = document.createElement('button');
+  installBtn.textContent = 'Install App';
+  installBtn.style.position = 'fixed';
+  installBtn.style.bottom = '20px';
+  installBtn.style.right = '20px';
+  installBtn.style.background = '#111';
+  installBtn.style.color = '#fff';
+  installBtn.style.border = 'none';
+  installBtn.style.padding = '10px 20px';
+  installBtn.style.borderRadius = '5px';
+  installBtn.style.cursor = 'pointer';
+  installBtn.style.zIndex = '1000';
+  installBtn.addEventListener('click', async () => {
+    installBtn.style.display = 'none';
+    if (deferredPrompt) {
+      // Show the prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      const { outcome } = await deferredPrompt.userChoice;
+      // Reset the deferred prompt variable, since
+      // deferredPrompt can only be used once.
+      deferredPrompt = null;
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+    }
+  });
+  document.body.appendChild(installBtn);
+}
+
+// Handle app installed event
+window.addEventListener('appinstalled', (evt) => {
+  console.log('Kainos Tees was installed');
+  // Hide the app-installer content
+  const installBtn = document.querySelector('button[textContent="Install App"]');
+  if (installBtn) installBtn.style.display = 'none';
+});
+
+// Notification permission handling
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    console.log('This browser does not support notifications');
+    return false;
+  }
+  
+  if (Notification.permission === 'granted') {
+    return true;
+  }
+  
+  if (Notification.permission === 'denied') {
+    console.log('Notification permission denied');
+    return false;
+  }
+  
+  const permission = await Notification.requestPermission();
+  notificationPermission = permission;
+  return permission === 'granted';
+}
+
+function subscribeToPushNotifications() {
+  if (!('serviceWorker' in navigator)) {
+    console.log('Service workers are not supported');
+    return;
+  }
+  
+  navigator.serviceWorker.ready
+    .then(registration => {
+      if (!('pushManager' in registration)) {
+        console.log('Push manager not available');
+        return;
+      }
+      
+      return registration.pushManager.getSubscription()
+        .then(async subscription => {
+          if (subscription) {
+            return subscription;
+          }
+          
+          const response = await fetch('/vapidPublicKey'); // You'd need to implement this endpoint
+          const vapidPublicKey = await response.text();
+          
+          return registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+          });
+        });
+    })
+    .then(subscription => {
+      console.log('Subscribed to push notifications:', subscription);
+      // Send subscription to your server
+      return fetch('/subscribe', {
+        method: 'POST',
+        body: JSON.stringify(subscription),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Error subscribing to push notifications:', error);
+    });
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+  
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 async function init() {
-  const user = await getCurrentUser()
-  if (user) setCurrentUser(user)
+   const user = await getCurrentUser()
+   if (user) setCurrentUser(user)
 
-  allProducts = await getProducts()
-  render()
+   // Show loading skeleton
+   showLoadingSkeleton()
+   
+   allProducts = await getProducts()
+   render()
 
-  initBgParticles()
+   initBgParticles()
+   
+   // Initialize ARIA states
+   initARIAStates()
+   
+   // Initialize connection status indicator
+   initConnectionStatus()
+   
+   // Check if we can show install prompt
+   if (deferredPrompt) {
+     showInstallPromotion();
+   }
+ }
+
+function initConnectionStatus() {
+   const statusEl = document.getElementById('connection-status')
+   if (!statusEl) return
+   
+   // Set initial state
+   updateConnectionStatus()
+   
+   // Listen for online/offline events
+   window.addEventListener('online', updateConnectionStatus)
+   window.addEventListener('offline', updateConnectionStatus)
+}
+
+function updateConnectionStatus() {
+   const statusEl = document.getElementById('connection-status')
+   if (!statusEl) return
+   
+   if (navigator.onLine) {
+     statusEl.textContent = 'Online'
+     statusEl.className = 'online'
+   } else {
+     statusEl.textContent = 'Offline'
+     statusEl.className = 'offline'
+   }
+}
+
+function initARIAStates() {
+   // Hamburger menu
+   const hamburger = document.querySelector('.hamburger')
+   const mobileNav = document.getElementById('mobile-nav')
+   if (hamburger && mobileNav) {
+     hamburger.addEventListener('click', () => {
+       const isOpen = mobileNav.classList.toggle('open')
+       hamburger.setAttribute('aria-expanded', isOpen)
+       mobileNav.setAttribute('aria-hidden', !isOpen)
+     })
+   }
+   
+   // Search toggle
+   const searchToggle = document.getElementById('search-toggle')
+   const searchBar = document.getElementById('search-bar')
+   if (searchToggle && searchBar) {
+     searchToggle.addEventListener('click', () => {
+       const isOpen = searchBar.classList.toggle('open')
+       searchToggle.setAttribute('aria-expanded', isOpen)
+       searchBar.setAttribute('aria-hidden', !isOpen)
+     })
+   }
+   
+   // Account button (placeholder)
+   const accountBtn = document.getElementById('account-btn')
+   if (accountBtn) {
+     accountBtn.addEventListener('click', () => {
+       // Toggle account modal or dropdown
+       // This would be implemented based on your account UI
+     })
+   }
+   
+   // Close mobile nav when clicking outside or on links
+   document.addEventListener('click', (e) => {
+     if (mobileNav && mobileNav.classList.contains('open') && 
+         !mobileNav.contains(e.target) && 
+         !hamburger.contains(e.target)) {
+       mobileNav.classList.remove('open')
+       hamburger.setAttribute('aria-expanded', 'false')
+       mobileNav.setAttribute('aria-hidden', 'true')
+     }
+   })
+   
+   // Close mobile nav on escape key
+   document.addEventListener('keydown', (e) => {
+     if (e.key === 'Escape' && mobileNav && mobileNav.classList.contains('open')) {
+       mobileNav.classList.remove('open')
+       hamburger.setAttribute('aria-expanded', 'false')
+       mobileNav.setAttribute('aria-hidden', 'true')
+       hamburger.focus() // Return focus to hamburger
+     }
+   })
 }
 
 init()
