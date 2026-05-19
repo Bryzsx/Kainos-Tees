@@ -89,30 +89,37 @@ if (!items.length) {
      </div>`
    return
  }
-  let html = `<div class="cart-header"><h3>Your Bag (${getCartCount()})</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
-    <div class="cart-items">`
-  items.forEach(i => {
-    html += `<div class="cart-item">
-      <img src="${i.image}" alt="${i.name}">
-      <div class="cart-item-info">
-        <div class="cart-item-name">${i.name}</div>
-        <div class="cart-item-meta">Size: ${i.size} &middot; Color: <span class="cart-dot" style="background:${i.color.h}"></span></div>
-        <div class="cart-item-price">$${i.price}</div>
-      </div>
-      <div class="cart-item-qty">
-        <button onclick="window.updateQty('${i.key}', -1)">\u2212</button>
-        <span>${i.qty}</span>
-        <button onclick="window.updateQty('${i.key}', 1)">+</button>
-      </div>
-      <button class="cart-item-remove" onclick="window.removeFromCart('${i.key}')">\u2715</button>
-    </div>`
-  })
-  html += `</div>
-    <div class="cart-footer">
-      <div class="cart-total"><span>Total</span><span>$${getCartTotal().toFixed(2)}</span></div>
-      <button class="cart-checkout">Checkout</button>
-    </div>`
-  cartDrawer.innerHTML = html
+ let html = `<div class="cart-header"><h3>Your Bag (${getCartCount()})</h3><button class="cart-close" onclick="window.closeCart()">\u2715</button></div>
+   <div class="cart-items">`
+ items.forEach(i => {
+   html += `<div class="cart-item">
+     <img src="${i.image}" alt="${i.name}" loading="lazy">
+     <div class="cart-item-info">
+       <div class="cart-item-name">${i.name}</div>
+       <div class="cart-item-meta">Size: ${i.size} &middot; Color: <span class="cart-dot" style="background:${i.color.h}"></span></div>
+     </div>
+     <div class="cart-item-price">$${i.price}</div>
+     <div class="cart-item-qty">
+       <button onclick="window.updateQty('${i.key}', -1)">\-</button>
+       <span>${i.qty}</span>
+       <button onclick="window.updateQty('${i.key}', 1)">+</button>
+     </div>
+     <button class="cart-item-remove" onclick="window.removeFromCart('${i.key}')">\u2715</button>
+   </div>`
+ })
+ html += `</div>
+   <div class="cart-shipping">
+     <div class="cart-shipping-text">Free shipping on orders over $50</div>
+     <div class="cart-shipping-bar">
+       <div class="cart-shipping-progress" style="width: ${Math.min(getCartTotal() / 50 * 100, 100)}%"></div>
+     </div>
+     <p class="cart-shipping-text">You're $${Math.max(50 - getCartTotal(), 0).toFixed(2)} away from free shipping</p>
+   </div>
+   <div class="cart-footer">
+     <div class="cart-total"><span>Total</span><span>$${getCartTotal().toFixed(2)}</span></div>
+     <button class="cart-checkout">Checkout</button>
+   </div>`
+ cartDrawer.innerHTML = html
 
   const btn = cartDrawer.querySelector('.cart-checkout')
   if (btn) {
