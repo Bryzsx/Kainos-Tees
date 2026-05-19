@@ -525,6 +525,157 @@ body {
     --color-shadow-inner-sm: inset 0 2px 4px rgba(255,255,255,.1);
     --color-shadow-inner-md: inset 0 4px 6px rgba(255,255,255,.2);
   }
+
+  /* Override hardcoded light-mode colors */
+  .header{background:var(--color-bg-header);border-bottom-color:var(--color-border)}
+  .logo{color:var(--color-text-primary)}
+  .logo span{color:#e84747}
+  .nav-link{color:var(--color-text-nav)}
+  .nav-link:hover{color:var(--color-text-nav-hover);background:var(--color-bg-secondary)}
+  .nav-link.act{background:var(--color-text-primary);color:var(--color-bg-primary)}
+  .header-actions span,.header-actions button{color:var(--color-text-primary)}
+  .hamburger span{background:var(--color-text-primary)}
+  .mobile-nav{background:var(--color-bg-mobile-nav)}
+  .mobile-nav-link{color:var(--color-text-primary)}
+  .mobile-nav-link:hover{background:var(--color-bg-secondary)}
+  .mobile-nav-close{color:var(--color-text-tertiary)}
+  .search-bar{background:var(--color-bg-secondary);border-bottom-color:var(--color-border)}
+  .search-bar input{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-primary)}
+  .search-bar input:focus{border-color:var(--color-border-input-focus)}
+  .page-head h1{color:var(--color-text-heading)}
+  .page-head p{color:var(--color-text-body)}
+  .breadcrumb{color:var(--color-text-meta)}
+  .breadcrumb a{color:var(--color-text-meta)}
+  .breadcrumb a:hover{color:var(--color-text-primary)}
+  .shop-bar{border-bottom-color:var(--color-border)}
+  .shop-bar .count{color:var(--color-text-caption)}
+  .shop-bar .sort{color:var(--color-text-secondary)}
+  .shop-bar .sort select{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-primary)}
+  .shop-bar .sort select:focus{border-color:var(--color-border-input-focus)}
+  .sidebar h4{color:var(--color-text-label)}
+  .sidebar section.hr{border-top-color:var(--color-border)}
+  .filter-group label{color:var(--color-text-secondary)}
+  .filter-group input[type=checkbox]{accent-color:var(--color-text-primary)}
+  .swatch{border-color:var(--color-border)}
+  .swatch:hover,.swatch.sel{border-color:var(--color-text-primary)}
+  .size-pill{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-secondary)}
+  .size-pill:hover,.size-pill.sel{border-color:var(--color-text-primary);color:var(--color-text-primary);background:var(--color-bg-secondary)}
+  .card{background:var(--color-bg-card)}
+  .card-inner{background:var(--color-bg-card)}
+  .card-img{background:var(--color-bg-quaternary)}
+  .card-name{color:var(--color-text-primary)}
+  .card-cat{color:var(--color-text-muted)}
+  .card-price{color:var(--color-text-price)}
+  .card-price .old{color:var(--color-text-price-old)}
+  .card-rating span{color:var(--color-text-muted)}
+  .c-dot{border-color:var(--color-border-checkbox)}
+  .c-dot:hover,.c-dot.sel{border-color:var(--color-text-primary)}
+  .c-size{border-color:var(--color-border-checkbox);color:var(--color-text-muted)}
+  .c-size:hover,.c-size.sel{border-color:var(--color-text-primary);color:var(--color-text-primary)}
+  .add-btn{background:var(--color-bg-button-primary);color:var(--color-text-inverse)}
+  .add-btn:hover{background:var(--color-bg-button-primary-hover)}
+  .pg{background:var(--color-bg-input);border-color:var(--color-border-checkbox);color:var(--color-text-secondary)}
+  .pg:hover{border-color:var(--color-text-primary);color:var(--color-text-primary)}
+  .pg.act{background:var(--color-text-primary);color:var(--color-bg-primary);border-color:var(--color-text-primary)}
+  .signup{background:var(--color-bg-secondary)}
+  .signup h2{color:var(--color-text-heading)}
+  .signup p{color:var(--color-text-body)}
+  .signup-form input{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-primary)}
+  .signup-form input:focus{border-color:var(--color-border-input-focus)}
+  .signup-form button{background:var(--color-bg-button-primary);color:var(--color-text-inverse)}
+  .signup-form button:hover{background:var(--color-bg-button-primary-hover)}
+  .footer{border-top-color:var(--color-border)}
+  .footer h4{color:var(--color-text-secondary)}
+  .footer a{color:var(--color-text-link)}
+  .footer a:hover{color:var(--color-text-link-hover)}
+  .footer .bottom{border-top-color:var(--color-border);color:var(--color-text-muted)}
+  .modal-overlay{background:var(--color-bg-overlay)}
+  .product-modal{background:var(--color-bg-modal)}
+  .modal-close{background:var(--color-bg-secondary);color:var(--color-text-secondary)}
+  .modal-close:hover{background:var(--color-bg-primary);color:var(--color-text-primary)}
+  .modal-img{background:var(--color-bg-quaternary)}
+  .modal-cat{color:var(--color-text-label)}
+  .modal-info h2{color:var(--color-text-heading)}
+  .modal-rating span{color:var(--color-text-muted)}
+  .modal-price{color:var(--color-text-price)}
+  .modal-price .old{color:var(--color-text-price-old)}
+  .modal-desc{color:var(--color-text-body)}
+  .modal-section h4{color:var(--color-text-label)}
+  .modal-add-btn{background:var(--color-bg-button-primary);color:var(--color-text-inverse)}
+  .modal-add-btn:hover{background:var(--color-bg-button-primary-hover)}
+  .checkout-modal{background:var(--color-bg-modal)}
+  .checkout-main{background:var(--color-bg-primary)}
+  .checkout-main h2{color:var(--color-text-heading)}
+  .checkout-sec{border-bottom-color:var(--color-border)}
+  .checkout-sec h3{color:var(--color-text-label)}
+  .chk-inp{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-primary)}
+  .chk-inp:focus{background:var(--color-bg-input-focus);border-color:var(--color-border-input-focus)}
+  .chk-field label{color:var(--color-text-label)}
+  .pay-method{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-secondary)}
+  .pay-method:hover{background:var(--color-bg-secondary);border-color:var(--color-border)}
+  .pay-method.act{background:var(--color-bg-primary);border-color:var(--color-text-primary);color:var(--color-text-primary)}
+  .pay-icon{background:var(--color-text-primary);color:var(--color-bg-primary)}
+  .pay-alt{border-color:var(--color-border)}
+  .pay-alt-icon{color:var(--color-text-primary)}
+  .pay-alt p{color:var(--color-text-body)}
+  .card-preview{border-color:var(--color-border)}
+  .checkout-side{background:var(--color-bg-checkout-side);border-left-color:var(--color-border)}
+  .checkout-side h3{color:var(--color-text-label)}
+  .chk-side-item{border-bottom-color:var(--color-border)}
+  .chk-side-name{color:var(--color-text-primary)}
+  .chk-side-meta{color:var(--color-text-meta)}
+  .chk-side-price{color:var(--color-text-primary)}
+  .checkout-btn{background:var(--color-bg-button-primary);color:var(--color-text-inverse)}
+  .checkout-btn:hover:not(:disabled){background:var(--color-bg-button-primary-hover)}
+  .chk-err{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--color-text-error)}
+  .acct-modal{background:var(--color-bg-acct-modal)}
+  .acct-modal h2{color:var(--color-text-heading)}
+  .acct-sub{color:var(--color-text-body)}
+  .acct-tabs{background:var(--color-bg-acct-tabs)}
+  .acct-tab{color:var(--color-text-caption)}
+  .acct-tab.act{background:var(--color-bg-acct-tab-act);color:var(--color-text-primary)}
+  .acct-btn{background:var(--color-bg-button-primary);color:var(--color-text-inverse)}
+  .acct-btn:hover{background:var(--color-bg-button-primary-hover)}
+  .acct-skip a{color:var(--color-text-link)}
+  .acct-skip a:hover{color:var(--color-text-link-hover)}
+  .verify-modal{background:var(--color-bg-verify-modal)}
+  .verify-modal h2{color:var(--color-text-heading)}
+  .verify-sub{color:var(--color-text-body)}
+  .verify-code{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-primary)}
+  .verify-code:focus{border-color:var(--color-border-input-focus)}
+  .verify-dash{color:var(--color-border)}
+  .verify-hint{background:var(--color-bg-verify-hint);color:var(--color-text-caption)}
+  .cart-overlay{background:var(--color-bg-cart-overlay)}
+  .cart-drawer{background:var(--color-bg-primary)}
+  .cart-header{background:var(--color-bg-cart-header);border-bottom-color:var(--color-border)}
+  .cart-header h3{color:var(--color-text-heading)}
+  .cart-close{color:var(--color-text-tertiary)}
+  .cart-close:hover{color:var(--color-text-primary)}
+  .cart-empty{color:var(--color-text-body)}
+  .cart-item{border-bottom-color:var(--color-border)}
+  .cart-item-name{color:var(--color-text-primary)}
+  .cart-item-meta{color:var(--color-text-meta)}
+  .cart-dot{border-color:var(--color-border-checkbox)}
+  .cart-item-price{color:var(--color-text-primary)}
+  .cart-item-qty button{background:var(--color-bg-input);border-color:var(--color-border-input);color:var(--color-text-secondary)}
+  .cart-item-qty button:hover{border-color:var(--color-text-primary);color:var(--color-text-primary)}
+  .cart-item-remove{color:var(--color-text-muted)}
+  .cart-item-remove:hover{color:var(--color-text-price-sale)}
+  .cart-footer{border-top-color:var(--color-border)}
+  .cart-total{color:var(--color-text-heading)}
+  .cart-checkout{background:var(--color-bg-cart-checkout);color:var(--color-text-inverse)}
+  .cart-checkout:hover{background:var(--color-bg-cart-checkout-hover)}
+  .toast{background:var(--color-bg-toast);color:var(--color-text-primary)}
+  .skeleton-card{background:var(--color-bg-card)}
+  .skip-link{background:var(--color-bg-primary);color:var(--color-text-primary)}
+  #connection-status{background:var(--color-bg-tertiary);color:var(--color-text-secondary)}
+  .col-txt{color:var(--color-text-inverse)}
+  .col-btn{background:var(--color-text-inverse);color:var(--color-bg-primary)}
+  ::selection{background:var(--color-text-primary);color:var(--color-bg-primary)}
+  .card-shine{background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.06),transparent 40%)}
+  .tag.sale,.tag.best{background:var(--color-bg-tag-sale)}
+  .card-quickview{background:var(--color-bg-modal);color:var(--color-text-primary)}
+  .col-ov{background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 50%)}
 }
 
 ::selection{background:#111;color:#fff}
